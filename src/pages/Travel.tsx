@@ -649,14 +649,15 @@ export default function Travel() {
                           className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#dbe08c]"
                           onKeyPress={(e) => {
                             if (e.key === 'Enter') {
-                              handleAddComment(0, e.target.value);
-                              e.target.value = '';
+                              const target = e.target as HTMLInputElement;
+                              handleAddComment(0, target.value);
+                              target.value = '';
                             }
                           }}
                         />
                         <button
                           onClick={() => {
-                            const input = document.querySelector('input[type="text"]');
+                            const input = document.querySelector<HTMLInputElement>('input[type="text"]');
                             if (input) {
                               handleAddComment(0, input.value);
                               input.value = '';
