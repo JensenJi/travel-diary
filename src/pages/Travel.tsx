@@ -82,10 +82,81 @@ function Calendar({ year, month, onDateClick, travelDates }) {
   );
 }
 
+// 简单地图组件（备用方案）
+function SimpleMap({ records, onMarkerClick, selectedLocation }) {
+  return (
+    <div className="w-full bg-white rounded-xl shadow-lg p-4">
+      <h3 className="text-lg font-bold text-[#89800c] mb-4 text-center">我的旅行足迹</h3>
+      <div className="relative bg-gradient-to-br from-[#f0f9e8] to-[#dbe08c]/20 rounded-lg p-6" style={{ height: '450px' }}>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-gray-400">
+            <MapPin className="w-16 h-16 mx-auto mb-2" />
+            <p>地图加载中...</p>
+          </div>
+        </div>
+        
+        {/* 旅行地点标记 */}
+        <div className="relative w-full h-full">
+          {records.map((record, index) => {
+            // 简单地将地点分布在中国地图的大致位置
+            const positions = [
+              { top: '60%', left: '70%' }, // 云南
+              { top: '62%', left: '72%' }, // 大理
+              { top: '25%', left: '30%' }, // 新疆伊犁
+              { top: '30%', left: '20%' }, // 喀什
+              { top: '55%', left: '75%' }, // 成都
+              { top: '52%', left: '72%' }, // 九寨沟
+              { top: '45%', left: '78%' }, // 北京
+              { top: '60%', left: '85%' }, // 上海
+              { top: '58%', left: '82%' }, // 青岛
+              { top: '62%', left: '86%' }, // 杭州
+              { top: '63%', left: '84%' }, // 苏州
+              { top: '70%', left: '78%' }, // 广州
+            ];
+            
+            const pos = positions[index] || { top: '50%', left: '50%' };
+            const isSelected = selectedLocation === record.location;
+            
+            return (
+              <div
+                key={record.id}
+                onClick={() => onMarkerClick(record)}
+                className={`absolute cursor-pointer transition-all hover:scale-110 z-10 ${
+                  isSelected ? 'scale-125' : ''
+                }`}
+                style={{ top: pos.top, left: pos.left, transform: 'translate(-50%, -50%)' }}
+              >
+                <div className={`relative flex flex-col items-center ${
+                  isSelected 
+                    ? '' 
+                    : ''
+                }`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shadow-lg ${
+                    isSelected 
+                      ? 'bg-[#89800c] text-white ring-4 ring-yellow-300' 
+                      : 'bg-[#dbe08c] text-[#89800c] border-2 border-[#89800c]'
+                  }`}>
+                    {index + 1}
+                  </div>
+                  <div className="mt-1 bg-white/90 px-2 py-1 rounded text-xs shadow text-gray-700 font-medium whitespace-nowrap">
+                    {record.location}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ECharts 地图组件
 function ChinaMap({ records, onMarkerClick, selectedLocation }) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapError, setMapError] = useState(false);
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -236,14 +307,29 @@ function ChinaMap({ records, onMarkerClick, selectedLocation }) {
       .then(response => response.json())
       .then(data => {
         echarts.registerMap('china', data);
+        setMapLoaded(true);
         if (chartInstance.current) {
           chartInstance.current.setOption({
             geo: { map: 'china' }
           });
         }
       })
-      .catch(error => console.error('加载地图数据失败:', error));
+      .catch(error => {
+        console.error('加载地图数据失败:', error);
+        setMapError(true);
+      });
   }, []);
+
+  // 如果地图加载失败，显示备用组件
+  if (mapError || !mapLoaded) {
+    return (
+      <SimpleMap 
+        records={records} 
+        onMarkerClick={onMarkerClick}
+        selectedLocation={selectedLocation}
+      />
+    );
+  }
 
   return (
     <div 
