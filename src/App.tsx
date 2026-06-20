@@ -5,6 +5,7 @@ import Works from "@/pages/Works";
 import Message from "@/pages/Message";
 import SiteMap from "@/pages/SiteMap";
 import Login from "@/pages/Login";
+import ForgotPassword from "@/pages/ForgotPassword";
 import Admin from "@/pages/Admin";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
@@ -23,6 +24,7 @@ export default function App() {
               <Route path="/message" element={<Message />} />
               <Route path="/sitemap" element={<SiteMap />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/admin" element={<Admin />} />
             </Routes>
           </main>

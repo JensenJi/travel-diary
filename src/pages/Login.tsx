@@ -144,9 +144,12 @@ export default function Login() {
                 </button>
 
                 {isLogin && (
-                  <div>
+                  <div className="flex justify-between items-center">
                     <Link to="/" className="text-sm text-gray-500 hover:text-[#89800c] transition-colors">
                       返回首页
+                    </Link>
+                    <Link to="/forgot-password" className="text-sm text-[#89800c] hover:text-[#d1d678] transition-colors">
+                      忘记密码？
                     </Link>
                   </div>
                 )}
