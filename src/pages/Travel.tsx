@@ -1,8 +1,6 @@
 import Navbar from "@/components/Navbar";
-import { useState, useEffect, useRef } from "react";
-import * as echarts from 'echarts';
-import { ChevronLeft, ChevronRight, MapPin, Calendar as CalendarIcon, Camera, MessageCircle, Lock, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight, MapPin, Calendar as CalendarIcon, Camera, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 // 虚拟旅行数据
@@ -82,260 +80,134 @@ function Calendar({ year, month, onDateClick, travelDates }) {
   );
 }
 
-// 简单地图组件（备用方案）
-function SimpleMap({ records, onMarkerClick, selectedLocation }) {
+// 简单地图组件 - 使用静态中国地图轮廓
+function SimpleChinaMap({ records, onMarkerClick, selectedLocation }) {
+  // 将经纬度转换为地图上的位置（简化版）
+  const getPosition = (lat, lng) => {
+    // 中国大致范围：纬度 18-54，经度 73-135
+    const mapWidth = 100; // 百分比
+    const mapHeight = 100;
+    
+    const x = ((lng - 73) / (135 - 73)) * mapWidth;
+    const y = ((54 - lat) / (54 - 18)) * mapHeight;
+    
+    return { left: `${x}%`, top: `${y}%` };
+  };
+
   return (
     <div className="w-full bg-white rounded-xl shadow-lg p-4">
-      <h3 className="text-lg font-bold text-[#89800c] mb-4 text-center">我的旅行足迹</h3>
-      <div className="relative bg-gradient-to-br from-[#f0f9e8] to-[#dbe08c]/20 rounded-lg p-6" style={{ height: '450px' }}>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-gray-400">
-            <MapPin className="w-16 h-16 mx-auto mb-2" />
-            <p>地图加载中...</p>
-          </div>
-        </div>
+      <h3 className="text-lg font-bold text-[#89800c] mb-4 text-center flex items-center justify-center gap-2">
+        <MapPin className="w-5 h-5" />
+        我的旅行足迹
+      </h3>
+      
+      {/* 地图容器 */}
+      <div 
+        className="relative bg-gradient-to-br from-[#f0f9e8] to-[#dbe08c]/30 rounded-lg overflow-hidden"
+        style={{ height: '500px' }}
+      >
+        {/* 中国地图轮廓背景 */}
+        <svg 
+          viewBox="0 0 800 600" 
+          className="absolute inset-0 w-full h-full opacity-20"
+          style={{ color: '#89800c' }}
+        >
+          {/* 简化的中国地图轮廓 */}
+          <path 
+            d="M400,50 L550,80 L650,150 L700,200 L750,250 L720,300 L680,350 L600,400 L500,450 L400,500 L300,480 L200,450 L150,400 L100,350 L80,300 L100,250 L150,200 L200,150 L300,100 L400,50"
+            fill="currentColor"
+            stroke="#89800c"
+            strokeWidth="2"
+          />
+        </svg>
         
         {/* 旅行地点标记 */}
-        <div className="relative w-full h-full">
-          {records.map((record, index) => {
-            // 简单地将地点分布在中国地图的大致位置
-            const positions = [
-              { top: '60%', left: '70%' }, // 云南
-              { top: '62%', left: '72%' }, // 大理
-              { top: '25%', left: '30%' }, // 新疆伊犁
-              { top: '30%', left: '20%' }, // 喀什
-              { top: '55%', left: '75%' }, // 成都
-              { top: '52%', left: '72%' }, // 九寨沟
-              { top: '45%', left: '78%' }, // 北京
-              { top: '60%', left: '85%' }, // 上海
-              { top: '58%', left: '82%' }, // 青岛
-              { top: '62%', left: '86%' }, // 杭州
-              { top: '63%', left: '84%' }, // 苏州
-              { top: '70%', left: '78%' }, // 广州
-            ];
-            
-            const pos = positions[index] || { top: '50%', left: '50%' };
-            const isSelected = selectedLocation === record.location;
+        {records.map((record, index) => {
+          const pos = getPosition(record.lat, record.lng);
+          const isSelected = selectedLocation === record.location;
+          
+          return (
+            <div
+              key={record.id}
+              onClick={() => onMarkerClick(record)}
+              className={`absolute cursor-pointer transition-all hover:scale-110 z-10 ${
+                isSelected ? 'scale-125 z-20' : ''
+              }`}
+              style={{ 
+                left: pos.left, 
+                top: pos.top, 
+                transform: 'translate(-50%, -50%)'
+              }}
+            >
+              {/* 标记点 */}
+              <div className={`relative flex flex-col items-center`}>
+                {/* 圆形标记 */}
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shadow-lg transition-all ${
+                  isSelected 
+                    ? 'bg-[#89800c] text-white ring-4 ring-yellow-300 scale-110' 
+                    : 'bg-[#dbe08c] text-[#89800c] border-2 border-[#89800c] hover:bg-[#89800c] hover:text-white'
+                }`}>
+                  {index + 1}
+                </div>
+                
+                {/* 地点名称 */}
+                <div className={`mt-1 px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${
+                  isSelected 
+                    ? 'bg-[#89800c] text-white shadow-lg' 
+                    : 'bg-white/90 text-gray-700 shadow'
+                }`}>
+                  {record.location}
+                </div>
+                
+                {/* 照片数量 */}
+                {record.photos.length > 1 && (
+                  <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                    {record.photos.length}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        
+        {/* 连接线 */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
+          {records.slice(0, -1).map((record, index) => {
+            const pos1 = getPosition(record.lat, record.lng);
+            const pos2 = getPosition(records[index + 1].lat, records[index + 1].lng);
             
             return (
-              <div
-                key={record.id}
-                onClick={() => onMarkerClick(record)}
-                className={`absolute cursor-pointer transition-all hover:scale-110 z-10 ${
-                  isSelected ? 'scale-125' : ''
-                }`}
-                style={{ top: pos.top, left: pos.left, transform: 'translate(-50%, -50%)' }}
-              >
-                <div className={`relative flex flex-col items-center ${
-                  isSelected 
-                    ? '' 
-                    : ''
-                }`}>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shadow-lg ${
-                    isSelected 
-                      ? 'bg-[#89800c] text-white ring-4 ring-yellow-300' 
-                      : 'bg-[#dbe08c] text-[#89800c] border-2 border-[#89800c]'
-                  }`}>
-                    {index + 1}
-                  </div>
-                  <div className="mt-1 bg-white/90 px-2 py-1 rounded text-xs shadow text-gray-700 font-medium whitespace-nowrap">
-                    {record.location}
-                  </div>
-                </div>
-              </div>
+              <line
+                key={`line-${index}`}
+                x1={pos1.left}
+                y1={pos1.top}
+                x2={pos2.left}
+                y2={pos2.top}
+                stroke="#89800c"
+                strokeWidth="2"
+                strokeOpacity="0.3"
+                style={{ 
+                  strokeDasharray: '5,5',
+                  animation: 'dash 20s linear infinite'
+                }}
+              />
             );
           })}
-        </div>
+        </svg>
+      </div>
+      
+      {/* 底部统计 */}
+      <div className="mt-4 flex justify-center gap-6 text-sm text-gray-600">
+        <span className="flex items-center gap-1">
+          <MapPin className="w-4 h-4 text-[#89800c]" />
+          去过 {records.length} 个地方
+        </span>
+        <span className="flex items-center gap-1">
+          <Camera className="w-4 h-4 text-[#89800c]" />
+          {records.reduce((sum, r) => sum + r.photos.length, 0)} 张照片
+        </span>
       </div>
     </div>
-  );
-}
-
-// ECharts 地图组件
-function ChinaMap({ records, onMarkerClick, selectedLocation }) {
-  const chartRef = useRef(null);
-  const chartInstance = useRef(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [mapError, setMapError] = useState(false);
-
-  useEffect(() => {
-    if (!chartRef.current) return;
-
-    // 初始化图表
-    chartInstance.current = echarts.init(chartRef.current);
-
-    // 中国地图配置
-    const option = {
-      title: {
-        text: '我的旅行足迹',
-        left: 'center',
-        top: 10,
-        textStyle: {
-          color: '#89800c',
-          fontSize: 18,
-          fontWeight: 'bold'
-        }
-      },
-      tooltip: {
-        trigger: 'item',
-        formatter: function(params) {
-          if (params.seriesType === 'scatter') {
-            const record = records.find(r => r.location === params.name);
-            if (record) {
-              return `${params.name}<br/>${record.date}<br/>${record.description}`;
-            }
-          }
-          return params.name;
-        }
-      },
-      geo: {
-        map: 'china',
-        roam: true,
-        zoom: 1.2,
-        center: [104, 36],
-        label: {
-          show: true,
-          color: '#666',
-          fontSize: 10
-        },
-        itemStyle: {
-          areaColor: '#f3f3f3',
-          borderColor: '#999',
-          borderWidth: 0.5
-        },
-        emphasis: {
-          itemStyle: {
-            areaColor: '#dbe08c',
-            borderColor: '#89800c',
-            borderWidth: 2
-          },
-          label: {
-            show: true,
-            color: '#89800c',
-            fontWeight: 'bold'
-          }
-        }
-      },
-      series: [
-        {
-          name: '旅行地点',
-          type: 'scatter',
-          coordinateSystem: 'geo',
-          data: records.map(record => ({
-            name: record.location,
-            value: [record.lng, record.lat, record.photos.length],
-            itemStyle: {
-              color: selectedLocation === record.location ? '#89800c' : '#dbe08c',
-              borderColor: '#89800c',
-              borderWidth: 2
-            },
-            symbolSize: record.photos.length * 8 + 15
-          })),
-          symbol: 'circle',
-          symbolSize: 20,
-          label: {
-            show: true,
-            formatter: '{b}',
-            position: 'right',
-            color: '#89800c',
-            fontSize: 12
-          },
-          emphasis: {
-            itemStyle: {
-              color: '#89800c'
-            },
-            label: {
-              show: true,
-              fontWeight: 'bold'
-            }
-          }
-        },
-        {
-          name: '旅行路线',
-          type: 'lines',
-          coordinateSystem: 'geo',
-          data: records.slice(0, -1).map((record, index) => ({
-            fromName: record.location,
-            toName: records[index + 1].location,
-            coords: [[record.lng, record.lat], [records[index + 1].lng, records[index + 1].lat]]
-          })),
-          lineStyle: {
-            color: '#89800c',
-            width: 2,
-            opacity: 0.6,
-            curveness: 0.2
-          },
-          effect: {
-            show: true,
-            period: 4,
-            trailLength: 0.2,
-            symbol: 'arrow',
-            symbolSize: 6,
-            color: '#dbe08c'
-          }
-        }
-      ]
-    };
-
-    chartInstance.current.setOption(option);
-
-    // 点击事件
-    chartInstance.current.on('click', function(params) {
-      if (params.seriesType === 'scatter') {
-        const record = records.find(r => r.location === params.name);
-        if (record) {
-          onMarkerClick(record);
-        }
-      }
-    });
-
-    // 窗口大小变化时重新渲染
-    const handleResize = () => {
-      chartInstance.current && chartInstance.current.resize();
-    };
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      chartInstance.current && chartInstance.current.dispose();
-    };
-  }, [records, selectedLocation, onMarkerClick]);
-
-  // 加载中国地图数据
-  useEffect(() => {
-    fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
-      .then(response => response.json())
-      .then(data => {
-        echarts.registerMap('china', data);
-        setMapLoaded(true);
-        if (chartInstance.current) {
-          chartInstance.current.setOption({
-            geo: { map: 'china' }
-          });
-        }
-      })
-      .catch(error => {
-        console.error('加载地图数据失败:', error);
-        setMapError(true);
-      });
-  }, []);
-
-  // 如果地图加载失败，显示备用组件
-  if (mapError || !mapLoaded) {
-    return (
-      <SimpleMap 
-        records={records} 
-        onMarkerClick={onMarkerClick}
-        selectedLocation={selectedLocation}
-      />
-    );
-  }
-
-  return (
-    <div 
-      ref={chartRef} 
-      className="w-full h-[500px] bg-white rounded-xl shadow-lg"
-    />
   );
 }
 
@@ -495,8 +367,8 @@ export default function Travel() {
 
             {/* 右侧地图和内容 */}
             <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? '' : 'ml-12'}`}>
-              {/* ECharts 地图 */}
-              <ChinaMap 
+              {/* 简化地图 */}
+              <SimpleChinaMap 
                 records={travelRecords}
                 onMarkerClick={handleMarkerClick}
                 selectedLocation={selectedLocation}
