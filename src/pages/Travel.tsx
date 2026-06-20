@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import { useState, useEffect, useRef } from "react";
 import * as echarts from 'echarts';
-import { ChevronLeft, ChevronRight, MapPin, Calendar, Camera, MessageCircle, Lock, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Calendar as CalendarIcon, Camera, MessageCircle, Lock, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
@@ -273,7 +273,7 @@ function PhotoModal({ record, onClose }) {
         <div className="p-6">
           <div className="flex gap-4 text-sm text-gray-500 mb-4">
             <span className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+              <CalendarIcon className="w-4 h-4" />
               {record.date}
             </span>
             <span className="flex items-center gap-1">
