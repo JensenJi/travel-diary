@@ -3,14 +3,6 @@ import { ExternalLink, Code, Eye } from "lucide-react";
 
 const works = [
   {
-    id: 0,
-    title: "许乐 XULOVE 品质商城",
-    description: "专业、共创、共管、共赢 —— 由鞋履、服饰、箱包、饰品行业资深从业者共创的品质商城，包含订单管理、商品管理、用户管理等功能。",
-    image: "/images/xulove.png",
-    tags: ["电商平台", "响应式", "Cloudflare Pages"],
-    url: "https://www.xulove.com",
-  },
-  {
     id: 1,
     title: "个人简历网站",
     description: "使用 React + Vite + Tailwind CSS 构建的现代化个人简历网站，支持编辑模式和数据导出。",
@@ -70,15 +62,10 @@ export default function Works() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div className="absolute bottom-4 left-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <a
-                      href={work.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 px-4 py-2 bg-white text-gray-800 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
+                    <button className="flex items-center gap-1 px-4 py-2 bg-white text-gray-800 rounded-lg hover:bg-gray-100 transition-colors">
                       <Eye className="w-4 h-4" />
                       预览
-                    </a>
+                    </button>
                     <button className="flex items-center gap-1 px-4 py-2 bg-[#89800c] text-white rounded-lg hover:bg-[#6b6409] transition-colors">
                       <Code className="w-4 h-4" />
                       源码
