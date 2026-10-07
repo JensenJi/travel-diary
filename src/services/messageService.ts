@@ -24,6 +24,7 @@ export const saveMessage = async (
   userEmail: string,
   content: string
 ): Promise<string> => {
+  if (!db) throw new Error("留言功能未配置");
   const docRef = await addDoc(collection(db, "messages"), {
     userId,
     userName,

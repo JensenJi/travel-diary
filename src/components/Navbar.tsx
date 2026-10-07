@@ -4,11 +4,11 @@ import { LogIn, LogOut, Settings } from "lucide-react";
 
 const navItems = [
   { name: "保险计算", path: "/insurance" },
-  { name: "工厂审核", path: "/audit", external: true },
+  { name: "工厂审核", path: "/audit.html", external: true },
   { name: "我的作品", path: "/works" },
   { name: "好友留言", path: "/message" },
   { name: "我的简历", path: "/aboutme" },
-  { name: "简历模板", path: "/resume-template", external: true },
+  { name: "简历模板", path: "/resume-template.html", external: true },
 ];
 
 export default function Navbar() {

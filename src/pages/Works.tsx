@@ -3,36 +3,36 @@ import { ExternalLink, Code, Eye } from "lucide-react";
 
 const works = [
   {
+    id: 0,
+    title: "许乐 XULOVE 品质商城",
+    description: "专业、共创、共管、共赢 —— 由鞋履、服饰、箱包、饰品行业资深从业者共创的品质商城，包含订单管理、商品管理、用户管理等功能。",
+    image: "https://picsum.photos/seed/xulove/400/300",
+    tags: ["电商平台", "响应式", "Cloudflare Pages"],
+    url: "https://www.xulove.com",
+  },
+  {
     id: 1,
     title: "个人简历网站",
-    description: "使用 React + Vite + Tailwind CSS 构建的现代化个人简历网站，支持编辑模式和数据导出。",
+    description: "使用 React + Vite + Tailwind CSS 构建的现代化个人主页，包含简历展示、作品展示、留言板、保险计算等功能。",
     image: "https://picsum.photos/seed/work1/400/300",
     tags: ["React", "TypeScript", "Tailwind CSS"],
-    url: "#",
+    url: "https://jensenji.cn",
   },
   {
     id: 2,
-    title: "电商管理系统",
-    description: "基于 React 和 Node.js 的电商后台管理系统，包含订单管理、商品管理、用户管理等功能。",
-    image: "https://picsum.photos/seed/work2/400/300",
-    tags: ["React", "Node.js", "MongoDB"],
-    url: "#",
+    title: "社保养老金估算工具",
+    description: "支持城乡居民养老与职工养老、多段跨省工作经历自动计算、断缴补缴测算、延迟退休年龄计算的单机版工具。",
+    image: "https://picsum.photos/seed/pension/400/300",
+    tags: ["HTML", "JavaScript", "社保计算"],
+    url: "https://jensenji.cn/insurance",
   },
   {
     id: 3,
-    title: "在线商城前端",
-    description: "响应式电商前端页面，支持商品浏览、购物车、订单结算等功能。",
-    image: "https://picsum.photos/seed/work3/400/300",
-    tags: ["Vue.js", "Element UI", "Axios"],
-    url: "#",
-  },
-  {
-    id: 4,
-    title: "企业官网",
-    description: "为某服装企业设计的现代化官网，展示企业形象和产品系列。",
-    image: "https://picsum.photos/seed/work4/400/300",
-    tags: ["HTML", "CSS", "JavaScript"],
-    url: "#",
+    title: "工厂审核申请表",
+    description: "工厂审核申请单页面，支持打印和填写，适用于服装工厂的品质审核流程。",
+    image: "https://picsum.photos/seed/audit/400/300",
+    tags: ["HTML", "CSS", "表单"],
+    url: "https://jensenji.cn/audit.html",
   },
 ];
 
@@ -62,14 +62,15 @@ export default function Works() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div className="absolute bottom-4 left-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="flex items-center gap-1 px-4 py-2 bg-white text-gray-800 rounded-lg hover:bg-gray-100 transition-colors">
+                    <a
+                      href={work.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 px-4 py-2 bg-white text-gray-800 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
                       <Eye className="w-4 h-4" />
                       预览
-                    </button>
-                    <button className="flex items-center gap-1 px-4 py-2 bg-[#89800c] text-white rounded-lg hover:bg-[#6b6409] transition-colors">
-                      <Code className="w-4 h-4" />
-                      源码
-                    </button>
+                    </a>
                   </div>
                 </div>
                 <div className="p-6">

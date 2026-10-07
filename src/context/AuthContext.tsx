@@ -38,6 +38,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -46,10 +50,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const login = async (email: string, password: string) => {
+    if (!auth) throw new Error("登录功能未配置");
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const register = async (email: string, password: string, username: string) => {
+    if (!auth) throw new Error("注册功能未配置");
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCredential.user, {
       displayName: username,
@@ -58,11 +64,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = async () => {
+    if (!auth) return;
     await signOut(auth);
     setUser(null);
   };
 
   const forgotPassword = async (email: string) => {
+    if (!auth) throw new Error("密码重置功能未配置");
     await sendPasswordResetEmail(auth, email);
   };
 
