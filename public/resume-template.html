@@ -1,0 +1,1127 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0"><meta http-equiv="Content-Security-Policy" content="frame-src https://processon.com https://*.processon.com; child-src https://processon.com https://*.processon.com; object-src &#39;none&#39;">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>简历名 - 个人简历</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;min-height:100vh;}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+    background:#eef2f5;
+    color:#333;
+    line-height:1.7;
+    display:flex;
+    justify-content:center;
+    padding:0;
+    align-items:stretch;
+  }
+  body.preview-mode{
+    height:auto;
+    min-height:auto;
+    display:block;
+    padding:0;
+  }
+  body.preview-mode .resume{
+    min-height:auto;
+    margin:0;
+    box-shadow:none;
+    width:100%;
+    background:#fff;
+  }
+  body.preview-mode{
+    background:#f0f2f5;
+  }
+  .resume{
+    width:880px;
+    max-width:100%;
+    background:#fff;
+    overflow:hidden;
+    box-shadow:0 8px 40px rgba(0,0,0,.1);
+    display:flex;
+    min-height:100vh;
+    flex:1;
+  }
+  @media print{
+    body{background:#f0f2f5!important;}
+    .resume{
+      min-height:297mm;
+      height:297mm!important;
+      max-height:297mm!important;
+      overflow:hidden!important;
+      margin:0 auto;
+      width:210mm;
+      background:#fff!important;
+    }
+    .sidebar{
+      background:#f0f2f5!important;
+      min-height:297mm!important;
+      height:297mm!important;
+    }
+    .main{
+      background:#fff!important;
+      min-height:297mm!important;
+      height:297mm!important;
+      overflow:hidden!important;
+    }
+    .section{page-break-inside:avoid;}
+    .show-more-btn{display:none!important;}
+    .no-print{display:none!important;}
+    .exp-more{display:none!important;visibility:hidden!important;height:0!important;}
+    .lang-add-row-btn{display:none!important;}
+    .interest-add-slot{display:none!important;}
+    *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  }
+
+  /* ===== 操作栏 ===== */
+  .action-bar{
+    position:fixed;
+    top:16px;
+    right:24px;
+    display:flex;
+    gap:8px;
+    z-index:1000;
+  }
+  .action-bar button{
+    padding:7px 16px;
+    font-size:13px;
+    font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+    color:#4a90d9;
+    background:#fff;
+    border:1px solid #d0e3f7;
+    border-radius:6px;
+    cursor:pointer;
+    transition:all .2s;
+    white-space:nowrap;
+  }
+  .action-bar button:hover{
+    background:#f0f6ff;
+    border-color:#4a90d9;
+  }
+  .edit-hint{
+    background:#4a90d9;
+    color:#fff;
+    padding:6px 16px;
+    border-radius:16px;
+    font-size:13px;
+    white-space:nowrap;
+  }
+  body.preview-mode .edit-hint{display:none !important;}
+  body.preview-mode [contenteditable]{outline:none !important;}
+
+  /* ===== 左侧栏 ===== */
+  .sidebar{
+    width:300px;
+    background:#f0f2f5;
+    color:#333;
+    padding:24px 20px;
+    flex-shrink:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    border-right:1px solid #dcdfe6;
+    justify-content:flex-start;
+    align-self:stretch;
+  }
+  .avatar{
+    width:150px;height:150px;
+    border-radius:50%;
+    background:rgba(0,0,0,.05);
+    border:3px solid rgba(0,0,0,.1);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:20px;
+    overflow:hidden;
+  }
+  .avatar svg{width:80px;height:80px;fill:rgba(0,0,0,.25);}
+  .avatar:hover{opacity:0.8;}
+  .sidebar h1{font-size:26px;font-weight:700;margin-bottom:30px;color:#333;}
+
+  .info-list{width:100%;list-style:none;font-size:13px;}
+  .info-list li{
+    padding:4px 0;
+    display:flex;align-items:center;gap:4px;
+    border-bottom:1px solid rgba(0,0,0,.06);
+  }
+  .info-list li:last-child{border:none;}
+  .info-list .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+  .info-list .label{
+    display:inline-block;
+    width:4em;
+    flex-shrink:0;
+    text-align:justify;
+    text-align-last:justify;
+    color:#888;
+  }
+  .info-list .colon{flex-shrink:0;color:#888;}
+  .info-list .value{color:#333;}
+
+  .skills{width:100%;margin-top:28px;}
+  .skills h3{
+    font-size:14px;letter-spacing:1px;color:#555;
+    margin-bottom:10px;display:flex;align-items:center;gap:6px;
+  }
+  .skill-item{margin-bottom:8px;}
+  .skill-item .name{font-size:12px;margin-bottom:4px;letter-spacing:.5px;color:#666;}
+  .skill-bar{display:flex;gap:4px;}
+  .skill-dot{
+    width:16px;height:16px;border-radius:50%;
+    background:rgba(0,0,0,.08);
+  }
+  .skill-dot.active{background:#4a90d9;box-shadow:0 0 4px rgba(74,144,217,.4);}
+
+  /* ===== 右侧主体 ===== */
+  .main{
+    flex:1;padding:24px 28px;
+    background:#fff;
+    align-self:stretch;
+  }
+  .section{margin-bottom:18px;}
+  .section:last-child{margin-bottom:0;}
+  .section-title{
+    font-size:17px;font-weight:700;color:#4a90d9;
+    display:flex;align-items:center;gap:8px;
+    margin-bottom:10px;
+    padding-bottom:6px;
+    border-bottom:2px solid #e8f0fb;
+  }
+  .section-title .icon{font-size:19px;}
+
+  /* 自我评价 */
+  .eval-text{font-size:13.5px;color:#555;line-height:1.6;text-indent:2em;}
+
+  /* 教育背景 */
+  .edu-school{font-weight:700;font-size:15px;color:#333;margin-bottom:2px;}
+  .edu-sub{font-size:13px;color:#555;margin-bottom:2px;}
+  .edu-sub .sep{margin:0 6px;color:#999;}
+  .edu-date{font-size:13px;color:#555;margin-bottom:6px;}
+  .edu-list{list-style:none;font-size:13px;color:#555;}
+  .edu-list li{padding:2px 0 2px 14px;position:relative;line-height:1.7;}
+  .edu-list li::before{content:"";position:absolute;left:0;top:10px;width:5px;height:5px;border-radius:50%;background:#999;}
+
+  /* 语言掌握 */
+  .lang-item{
+    display:flex;align-items:center;flex-wrap:wrap;gap:2px;
+    font-size:13px;margin-bottom:6px;
+  }
+  .lang-item .lang-label{
+    display:inline-block;width:4em;flex-shrink:0;
+    text-align:justify;text-align-last:justify;color:#888;
+  }
+  .lang-item .lang-colon{flex-shrink:0;color:#888;}
+  .lang-item select{
+    font-size:13px;font-family:inherit;color:#333;
+    border:1px solid #dcdfe6;border-radius:4px;
+    padding:3px 8px;background:#fff;cursor:pointer;outline:none;
+    transition:border-color .2s;margin-right:10px;
+  }
+  .lang-item select:focus{border-color:#4a90d9;}
+  .lang-item select:disabled{opacity:.45;cursor:default;background:#f5f5f5;}
+  .lang-item .score-label{
+    display:inline-block;width:2em;flex-shrink:0;
+    text-align:justify;text-align-last:justify;color:#888;
+  }
+  .lang-custom{
+    display:none;align-items:center;gap:4px;margin-left:4px;
+  }
+  .lang-custom.show{display:inline-flex;}
+  .lang-custom input{
+    font-size:13px;font-family:inherit;
+    border:1px solid #dcdfe6;border-radius:4px;
+    padding:3px 8px;width:90px;outline:none;
+  }
+  .lang-custom input:focus{border-color:#4a90d9;}
+  .lang-custom button{
+    font-size:12px;font-family:inherit;
+    color:#4a90d9;background:#f0f6ff;
+    border:1px solid #d0e3f7;border-radius:4px;
+    padding:3px 10px;cursor:pointer;white-space:nowrap;
+  }
+  .lang-custom button:hover{background:#e1f0fe;}
+  .lang-add-row-btn{
+    display:inline-block;
+    margin-top:4px;
+    padding:3px 12px;
+    font-size:13px;font-family:inherit;
+    color:#4a90d9;background:#f0f6ff;
+    border:1px dashed #4a90d9;border-radius:4px;
+    cursor:pointer;transition:all .2s;
+  }
+  .lang-add-row-btn:hover{background:#e1f0fe;}
+
+  /* 工作经历 */
+  .exp-entry{margin-bottom:10px;}
+  .exp-entry:last-child{margin-bottom:0;}
+  .exp-sub{font-size:14px;color:#555;margin-bottom:2px;}
+  .exp-sub .company{font-weight:600;color:#444;}
+  .exp-sub .sep{margin:0 6px;color:#999;}
+  .exp-sub .role{color:#4a90d9;font-weight:600;}
+  .exp-meta{font-size:13px;color:#555;margin-bottom:8px;}
+  .exp-meta .sep{margin:0 6px;color:#999;}
+  .exp-meta .duration{color:#d4a017;font-weight:600;}
+  .exp-list{list-style:none;font-size:13px;color:#555;}
+  .exp-list li{padding:3px 0 3px 14px;position:relative;line-height:1.7;}
+  .exp-list li::before{content:"";position:absolute;left:0;top:10px;width:5px;height:5px;border-radius:50%;background:#8ca0b4;}
+  .exp-more{display:none;}
+  .exp-more.show{display:block;page-break-before:always;}
+  .show-more-btn{
+    display:block;
+    margin:0 auto;
+    padding:6px 24px;
+    font-size:13px;
+    color:#4a90d9;
+    background:#f0f6ff;
+    border:1px solid #d0e3f7;
+    border-radius:20px;
+    cursor:pointer;
+    font-family:inherit;
+    transition:all .2s;
+  }
+  .show-more-btn:hover{
+    background:#e1f0fe;
+    border-color:#4a90d9;
+  }
+
+  /* 兴趣特长 */
+  .interests-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px 8px;
+  }
+  .interest-slot{
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .interest-main{
+    display:flex;align-items:center;gap:8px;
+  }
+  .interest-main svg{
+    width:24px;height:24px;
+    stroke:#4a90d9;stroke-width:1.5;fill:none;
+    stroke-linecap:round;stroke-linejoin:round;
+    flex-shrink:0;
+  }
+  .interest-main select{
+    font-size:13px;font-family:inherit;color:#666;
+    border:1px solid #dcdfe6;border-radius:4px;
+    padding:3px 6px;background:#fff;cursor:pointer;outline:none;
+    transition:border-color .2s;
+  }
+  .interest-main select:focus{border-color:#4a90d9;}
+  .interest-custom{
+    display:none;align-items:center;gap:4px;
+  }
+  .interest-custom.show{display:flex;}
+  .interest-custom input{
+    font-size:12px;font-family:inherit;
+    border:1px solid #dcdfe6;border-radius:4px;
+    padding:3px 6px;width:70px;outline:none;
+  }
+  .interest-custom input:focus{border-color:#4a90d9;}
+  .interest-custom button{
+    font-size:12px;font-family:inherit;
+    color:#4a90d9;background:#f0f6ff;
+    border:1px solid #d0e3f7;border-radius:4px;
+    padding:3px 8px;cursor:pointer;white-space:nowrap;
+  }
+  .interest-custom button:hover{background:#e1f0fe;}
+  .interest-add-slot{
+    display:flex;align-items:center;justify-content:center;
+    min-height:40px;
+  }
+  .interest-add-slot-btn{
+    font-size:13px;font-family:inherit;
+    color:#4a90d9;background:#f0f6ff;
+    border:1px dashed #4a90d9;border-radius:6px;
+    padding:8px 20px;cursor:pointer;
+    transition:all .2s;width:100%;
+  }
+  .interest-add-slot-btn:hover{background:#e1f0fe;}
+
+  /* 响应式 */
+  @media(max-width:680px){
+    .resume{flex-direction:column;}
+    .sidebar{width:100%;padding:30px 24px;}
+    .main{padding:28px 24px;}
+    .interests-grid{grid-template-columns:repeat(2,1fr);gap:10px 6px;}
+  }
+
+  /* ===== A4 打印 ===== */
+  @media print{
+    @page{size:A4;margin:0;}
+    html,body{height:auto;min-height:auto;margin:0;padding:0;}
+    body{background:#fff;display:block;}
+    .action-bar{display:none!important;}
+    .resume{
+      box-shadow:none;
+      border-radius:0;
+      width:210mm;
+      max-width:100%;
+      min-height:297mm;
+      height:auto;
+      margin:0;
+      overflow:hidden;
+      display:flex;
+      align-items:stretch;
+    }
+    .sidebar{
+      background:#f0f2f5!important;
+      page-break-inside:avoid;
+      height:auto;
+      min-height:297mm;
+      align-self:stretch;
+    }
+    .main{
+      page-break-inside:auto;
+      background:#fff!important;
+      height:auto;
+      min-height:297mm;
+    }
+    .section{page-break-inside:avoid;}
+    .show-more-btn{display:none!important;}
+    .no-print { display: none !important; }
+    .exp-more { display: none !important; visibility:hidden!important; height:0!important; }
+    .lang-add-row-btn { display: none !important; }
+    .interest-add-slot { display: none !important; }
+    *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  }
+
+
+
+  [contenteditable="true"]:focus {
+    outline: 2px solid #4a90d9;
+    background: #f0f7ff;
+    border-radius: 3px;
+    padding: 2px 4px;
+  }
+  [contenteditable="true"]:hover {
+    background: #f5f5f5;
+    cursor: text;
+  }
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var mode=params.get('mode')||'edit';
+  document.body.classList.add(mode+'-mode');
+  if(mode==='preview'){
+    document.querySelectorAll('[contenteditable]').forEach(function(el){
+      el.contentEditable='false';
+    });
+  }
+})();
+</script>
+
+<!-- 操作栏 -->
+<div class="action-bar no-print">
+  <div class="edit-hint" id="editHint">✏️ 点击任意文字即可编辑</div>
+</div>
+
+<div class="resume">
+  <!-- 左侧 -->
+  <aside class="sidebar">
+    <div class="avatar" id="avatarBox" onclick="document.getElementById('avatarInput').click()" style="cursor:pointer;position:relative;">
+      <img id="avatarImg" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+      <svg id="avatarSvg" viewBox="0 0 24 24"><path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"></path></svg>
+      <div style="position:absolute;bottom:4px;right:4px;background:rgba(74,144,217,0.9);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;pointer-events:none;">📷</div>
+    </div>
+    <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(this)">
+    <h1 contenteditable="true">Jensen Ji</h1>
+
+    <h3 style="margin-top:28px;font-size:14px;letter-spacing:1px;color:#555;margin-bottom:10px;display:flex;align-items:center;gap:6px;width:100%;"><span class="icon">👤</span>个人信息</h3>
+    <ul class="info-list">
+      <li><span class="icon">🎂</span><span class="label">出生日期</span><span class="colon">：</span><span class="value" contenteditable="true">1998年8月</span></li>
+      <li><span class="icon">🚻</span><span class="label">性别</span><span class="colon">：</span><span class="value" contenteditable="true">男</span></li>
+      <li><span class="icon">📍</span><span class="label">籍贯</span><span class="colon">：</span><span class="value" contenteditable="true">湖南</span></li>
+      <li><span class="icon">🏠</span><span class="label">常住地址</span><span class="colon">：</span><span class="value" contenteditable="true">成都</span></li>
+      <li><span class="icon">👤</span><span class="label">民族</span><span class="colon">：</span><span class="value" contenteditable="true">汉族</span></li>
+      <li data-field="phone"><span class="icon">📞</span><span class="label">电话</span><span class="colon">：</span><span class="value" contenteditable="true">13800138001</span></li>
+      <li data-field="email"><span class="icon">✉️</span><span class="label">邮箱</span><span class="colon">：</span><span class="value" contenteditable="true">www@yyjianli.com</span></li>
+      <li data-optional="true"><span class="icon">🌐</span><span class="label">个人主页</span><span class="colon">：</span><span class="value"><a href="https://jensenji.cn" target="_blank" style="color:#2980b9;text-decoration:none;" contenteditable="true">https://jensenji.cn</a></span></li>
+    </ul>
+
+    <div class="skills">
+      <h3>💡 掌握技能</h3>
+      <div class="skill-item">
+        <div class="name">PHOTOSHOP</div>
+        <div class="skill-bar">
+          <div class="skill-dot active"></div><div class="skill-dot active"></div><div class="skill-dot active"></div><div class="skill-dot active"></div><div class="skill-dot active"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="name">HTML</div>
+        <div class="skill-bar">
+          <div class="skill-dot active"></div><div class="skill-dot active"></div><div class="skill-dot active"></div><div class="skill-dot"></div><div class="skill-dot"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="name">CSS</div>
+        <div class="skill-bar">
+          <div class="skill-dot active"></div><div class="skill-dot active"></div><div class="skill-dot"></div><div class="skill-dot"></div><div class="skill-dot"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="name">JAVA SCRIPT</div>
+        <div class="skill-bar">
+          <div class="skill-dot active"></div><div class="skill-dot"></div><div class="skill-dot"></div><div class="skill-dot"></div><div class="skill-dot"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="name">MICROSOFT OFFICE</div>
+        <div class="skill-bar">
+          <div class="skill-dot active"></div><div class="skill-dot active"></div><div class="skill-dot active"></div><div class="skill-dot active"></div><div class="skill-dot"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 右侧 -->
+  <main class="main">
+    <!-- 自我评价 -->
+    <section class="section">
+      <h2 class="section-title"><span class="icon">📝</span>自我评价</h2>
+      <p class="eval-text" contenteditable="true">我是一位充满热情和创造力的广告设计师，拥有广泛的设计软件技能和丰富的项目管理经验。在过去的工作中，我展现了出色的创意设计能力和团队协作精神，成功帮助客户实现其广告目标。我热爱挑战，渴望在广告领域继续深造和成长，为公司贡献我的才能和热情。</p>
+    </section>
+
+    <!-- 教育背景 -->
+    <section class="section">
+      <h2 class="section-title"><span class="icon">🎓</span>教育背景</h2>
+      <div class="edu-school" contenteditable="true">电子科技大学</div>
+      <div class="edu-sub" contenteditable="true">本科<span class="sep">|</span>市场营销</div>
+      <div class="edu-date" contenteditable="true">2016年09月 - 2020年07月</div>
+      <ul class="edu-list">
+        <li contenteditable="true">主修课程：视觉传达设计、广告学、媒体市场营销、品牌管理等</li>
+        <li contenteditable="true">获得管理学学士学位</li>
+      </ul>
+    </section>
+
+    <!-- 语言掌握 -->
+    <section class="section">
+      <h2 class="section-title"><span class="icon">🌐</span>语言掌握</h2>
+      <div id="langContainer">
+        <!-- 母语 -->
+        <div class="lang-item lang-native-row">
+          <span class="lang-label">母语</span><span class="lang-colon">：</span>
+          <select class="lang-select"><option value="">请选择</option><option value="英语">英语</option><option value="日语">日语</option><option value="韩语">韩语</option><option value="法语">法语</option><option value="德语">德语</option><option value="西班牙语">西班牙语</option><option value="俄语">俄语</option><option value="阿拉伯语">阿拉伯语</option><option value="中文">中文</option><option value="其他">其他</option></select>
+          <div class="lang-custom">
+            <input type="text" placeholder="输入语言名称" class="lang-input">
+            <button type="button" class="lang-custom-add-btn">添加</button>
+          </div>
+        </div>
+        <!-- 第二语言 -->
+        <div class="lang-item">
+          <span class="lang-label">第二语言</span><span class="lang-colon">：</span>
+          <select class="lang-select"><option value="">请选择</option><option value="英语">英语</option><option value="日语">日语</option><option value="韩语">韩语</option><option value="法语">法语</option><option value="德语">德语</option><option value="西班牙语">西班牙语</option><option value="俄语">俄语</option><option value="阿拉伯语">阿拉伯语</option><option value="中文">中文</option><option value="其他">其他</option></select>
+          <span class="score-label">成绩</span><span class="lang-colon">：</span>
+          <select class="score-select"><option value="">请选择</option><option value="CET-4">CET-4</option><option value="CET-6">CET-6</option><option value="PETS5">PETS5</option><option value="IELTS">IELTS</option><option value="TOEFL">TOEFL</option><option value="一般">一般</option><option value="优秀">优秀</option></select>
+          <div class="lang-custom">
+            <input type="text" placeholder="输入语言名称" class="lang-input">
+            <button type="button" class="lang-custom-add-btn">添加</button>
+          </div>
+        <button type="button" class="lang-add-row-btn no-print" onclick="addLangRow()" style="margin-left:8px;">添加</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 工作经历 -->
+    <section class="section">
+      <h2 class="section-title"><span class="icon">💼</span>工作经历</h2>
+
+      <div class="exp-entry">
+        <div class="exp-sub">
+          <span class="company" contenteditable="true">成都詹森科技</span><span class="sep">|</span><span class="role" contenteditable="true">总经理</span><span class="sep">|</span>全职
+        </div>
+        <div class="exp-meta" contenteditable="true">2022年09月 - 至今<span class="sep">|</span>四川·成都<span class="sep">|</span><span class="duration">3年</span></div>
+        <ul class="exp-list">
+          <li contenteditable="true">负责客户的广告创意与视觉设计工作，提升广告吸引力和传播效果。</li>
+          <li contenteditable="true">成功为多个大型品牌提供完整的广告解决方案，包括平面广告、社交媒体广告等。</li>
+          <li contenteditable="true">主导公司内部设计团队，提升团队整体设计能力和效率。</li>
+        </ul>
+      </div>
+
+      <div class="exp-more" id="expMore">
+        <div class="exp-entry">
+          <div class="exp-sub">
+            <span class="company" contenteditable="true">上海詹森科技</span><span class="sep">|</span><span class="role" contenteditable="true">总经理</span><span class="sep">|</span>全职
+          </div>
+          <div class="exp-meta" contenteditable="true">2020年07月 - 2022年08月<span class="sep">|</span>上海<span class="sep">|</span><span class="duration">2年</span></div>
+          <ul class="exp-list">
+            <li contenteditable="true">负责公司整体运营战略规划与执行，推动业务持续增长。</li>
+            <li contenteditable="true">管理跨部门团队协作，优化流程，提升组织效率。</li>
+            <li contenteditable="true">开拓新市场与客户资源，建立长期合作关系。</li>
+          </ul>
+        </div>
+
+        <div class="exp-entry">
+          <div class="exp-sub">
+            <span class="company" contenteditable="true">深圳创意设计有限公司</span><span class="sep">|</span><span class="role" contenteditable="true">设计主管</span><span class="sep">|</span>全职
+          </div>
+          <div class="exp-meta" contenteditable="true">2018年07月 - 2020年06月<span class="sep">|</span>广东·深圳<span class="sep">|</span><span class="duration">2年</span></div>
+          <ul class="exp-list">
+            <li contenteditable="true">负责品牌视觉设计项目，主导创意方案从概念到落地的全过程。</li>
+            <li contenteditable="true">协调设计与市场团队，确保设计方案符合客户需求与品牌调性。</li>
+            <li contenteditable="true">建立设计规范与素材库，提高团队设计产出效率与一致性。</li>
+          </ul>
+        </div>
+      </div>
+
+      <button class="show-more-btn" onclick="toggleMore()">显示更多 ▼</button>
+    </section>
+
+    <!-- 兴趣特长 -->
+    <section class="section">
+      <h2 class="section-title"><span class="icon">🎯</span>兴趣特长</h2>
+      <div class="interests-grid" id="interestsGrid">
+      <!-- 1个兴趣槽位 + 添加按钮，由JS生成 -->
+    </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ============ PDF下载 & 打印 ============ */
+
+// 隐藏值为空的可选字段
+function hideEmptyOptionalFields(){
+  document.querySelectorAll('li[data-optional="true"]').forEach(function(li){
+    var valueEl = li.querySelector('.value');
+    if(valueEl && !valueEl.innerText.trim()){
+      li.style.display = 'none';
+    } else {
+      li.style.display = '';
+    }
+  });
+}
+
+// 监听 contenteditable 变化，实时隐藏/显示
+function setupOptionalFieldListeners(){
+  document.querySelectorAll('li[data-optional="true"]').forEach(function(li){
+    var valueEl = li.querySelector('.value');
+    if(!valueEl) return;
+    function checkEmpty(){
+      if(!valueEl.innerText.trim()){ li.style.display = 'none'; }
+      else { li.style.display = ''; }
+    }
+    function showLi(){ li.style.display = ''; }
+    valueEl.addEventListener('input', checkEmpty);
+    valueEl.addEventListener('blur', checkEmpty);
+    valueEl.addEventListener('focus', showLi);
+    valueEl.querySelectorAll('[contenteditable]').forEach(function(child){
+      child.addEventListener('input', checkEmpty);
+      child.addEventListener('blur', checkEmpty);
+      child.addEventListener('focus', showLi);
+    });
+  });
+}
+function adjustSidebarHeight(){
+  var resume=document.querySelector('.resume');
+  var sidebar=document.querySelector('.sidebar');
+  if(!resume||!sidebar)return;
+  var resumeHeight=resume.scrollHeight;
+  var a4Height=Math.round(297*3.7795275591); // 297mm to px (1mm ≈ 3.78px)
+  var targetHeight=Math.max(resumeHeight,a4Height);
+  sidebar.style.minHeight=targetHeight+'px';
+  resume.style.minHeight=targetHeight+'px';
+}
+
+function preserveSelectValues(){
+  document.querySelectorAll('select').forEach(function(sel){
+    sel.querySelectorAll('option').forEach(function(opt){
+      if(opt.value === sel.value && sel.value){
+        opt.setAttribute('selected','selected');
+      }else{
+        opt.removeAttribute('selected');
+      }
+    });
+  });
+}
+
+function getResumeData(){
+  preserveSelectValues();
+  hideEmptyOptionalFields();
+  adjustSidebarHeight();
+  var resume=document.querySelector('.resume');
+  var resumeContent=resume.innerHTML;
+  var nameEl=document.querySelector('.sidebar h1');
+  var emailEl=document.querySelector('li[data-field="email"] .value');
+  var phoneEl=document.querySelector('li[data-field="phone"] .value');
+  return {
+    name:nameEl?nameEl.innerText.trim():'',
+    email:emailEl?emailEl.innerText.trim():'',
+    phone:phoneEl?phoneEl.innerText.trim():'',
+    content:resumeContent
+  };
+}
+
+function saveResumeData(){
+  preserveSelectValues();
+  hideEmptyOptionalFields();
+  adjustSidebarHeight();
+  var resume=document.querySelector('.resume');
+  var resumeContent=resume.innerHTML;
+  var nameEl=document.querySelector('.sidebar h1');
+  var emailEl=document.querySelector('li[data-field="email"] .value');
+  var phoneEl=document.querySelector('li[data-field="phone"] .value');
+  var resumeData={
+    name:nameEl?nameEl.innerText.trim():'',
+    email:emailEl?emailEl.innerText.trim():'',
+    phone:phoneEl?phoneEl.innerText.trim():'',
+    content:resumeContent
+  };
+  console.log('Saving resume',resumeData);
+  return fetch('/api/resumes',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(resumeData),
+    keepalive:true
+  }).then(function(res){return res.json();})
+  .then(function(data){
+    if(data.success){
+      localStorage.setItem('savedResume',JSON.stringify(resumeData));
+      window.parent.postMessage({type:'resumeSaved',success:true},'*');
+      return true;
+    }else{
+      window.parent.postMessage({type:'resumeSaved',success:false,error:data.error||'未知错误'},'*');
+      return false;
+    }
+  }).catch(function(err){
+    console.error('Save error',err);
+    window.parent.postMessage({type:'resumeSaved',success:false,error:'网络错误'},'*');
+    return false;
+  });
+}
+
+function downloadPDF(){
+  // Hide extra work experiences for single page
+  var expMore=document.getElementById('expMore');
+  if(expMore) expMore.style.display='none';
+  var showMoreBtn=document.querySelector('.show-more-btn');
+  if(showMoreBtn) showMoreBtn.style.display='none';
+  adjustSidebarHeight();
+  var element=document.querySelector('.resume');
+  if(typeof html2pdf!=='undefined'){
+    html2pdf().set({
+      margin:0,
+      filename:'简历.pdf',
+      image:{type:'jpeg',quality:0.98},
+      html2canvas:{scale:2,useCORS:true,backgroundColor:'#f0f2f5',width:210*3.7795275591},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+      pagebreak:{mode:['css'],avoid:'.section'}
+    }).from(element).save().then(function(){
+      if(expMore) expMore.style.display='';
+      if(showMoreBtn) showMoreBtn.style.display='';
+    });
+  }else{
+    window.print();
+  }
+}
+
+function printResume(){
+  var expMore=document.getElementById('expMore');
+  if(expMore) expMore.style.display='none';
+  var showMoreBtn=document.querySelector('.show-more-btn');
+  if(showMoreBtn) showMoreBtn.style.display='none';
+  adjustSidebarHeight();
+  window.print();
+  setTimeout(function(){
+    if(expMore) expMore.style.display='';
+    if(showMoreBtn) showMoreBtn.style.display='';
+  },1000);
+}
+
+/* ============ 工作经历 显示更多 ============ */
+function toggleMore(){
+  var box=document.getElementById('expMore');
+  var btn=event.target;
+  if(box.classList.contains('show')){
+    box.classList.remove('show');
+    btn.innerHTML='显示更多 ▼';
+  }else{
+    box.classList.add('show');
+    btn.innerHTML='收起更多 ▲';
+  }
+}
+
+/* ============ 语言掌握 ============ */
+var baseLanguages=['英语','日语','韩语','法语','德语','西班牙语','俄语','阿拉伯语','中文'];
+var customLanguages=[];
+var defaultLangValues=['中文','英语'];
+
+var scoreOptions={
+  '英语':['CET-4','CET-6','PETS5','IELTS','TOEFL','一般','优秀'],
+  '日语':['JLPT N1','JLPT N2','JLPT N3','JLPT N4','JLPT N5','一般','优秀'],
+  '韩语':['TOPIK 1级','TOPIK 2级','TOPIK 3级','TOPIK 4级','TOPIK 5级','TOPIK 6级','一般','优秀'],
+  '法语':['DELF A1','DELF A2','DELF B1','DELF B2','DALF C1','DALF C2','一般','优秀'],
+  '德语':['Goethe B1','Goethe B2','Goethe C1','Goethe C2','TestDaF 3','TestDaF 4','TestDaF 5','DSH-2','一般','优秀'],
+  '西班牙语':['DELE A1','DELE A2','DELE B1','DELE B2','DELE C1','DELE C2','一般','优秀'],
+  '俄语':['ТРКИ-1','ТРКИ-2','ТРКИ-3','ТРКИ-4','一般','优秀'],
+  '阿拉伯语':['ALPT A1','ALPT A2','ALPT B1','ALPT B2','ALPT C1','ALPT C2','一般','优秀'],
+  '中文':['HSK 1级','HSK 2级','HSK 3级','HSK 4级','HSK 5级','HSK 6级','一般','优秀']
+};
+
+function getAllLanguages(){
+  return baseLanguages.concat(customLanguages);
+}
+
+function getScoreOptions(lang){
+  return scoreOptions[lang]||['一般','优秀'];
+}
+
+function getLangLabel(index){
+  if(index===0) return '母语';
+  var nums=['二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五'];
+  var n=nums[index-1];
+  if(!n) n=String(index+1);
+  return '第'+n+'语言';
+}
+
+function populateAllLangSelects(){
+  var allLangs=getAllLanguages();
+  document.querySelectorAll('.lang-select').forEach(function(sel){
+    var currentVal=sel.value;
+    var isOther=(currentVal==='其他');
+    sel.innerHTML='<option value="">请选择</option>';
+    allLangs.forEach(function(lang){
+      var o=document.createElement('option');
+      o.value=lang;o.textContent=lang;
+      sel.appendChild(o);
+    });
+    var other=document.createElement('option');
+    other.value='其他';other.textContent='其他';
+    sel.appendChild(other);
+    sel.value=isOther?'其他':currentVal;
+  });
+}
+
+function updateScoreSelect(langSel,scoreSel){
+  var lang=langSel.value;
+  scoreSel.innerHTML='';
+  if(lang&&lang!=='其他'){
+    var opts=getScoreOptions(lang);
+    var ph=document.createElement('option');
+    ph.value='';ph.textContent='请选择';
+    scoreSel.appendChild(ph);
+    opts.forEach(function(opt){
+      var o=document.createElement('option');
+      o.value=opt;o.textContent=opt;
+      scoreSel.appendChild(o);
+    });
+    scoreSel.disabled=false;
+  }else{
+    var p=document.createElement('option');
+    p.value='';p.textContent='请选择';
+    scoreSel.appendChild(p);
+    scoreSel.disabled=true;
+  }
+}
+
+function initLangRow(item,idx){
+  var langSel=item.querySelector('.lang-select');
+  var scoreSel=item.querySelector('.score-select');
+  var customDiv=item.querySelector('.lang-custom');
+  var customInput=item.querySelector('.lang-input');
+  var customBtn=item.querySelector('.lang-custom-add-btn');
+
+  if(defaultLangValues[idx]){
+    langSel.value=defaultLangValues[idx];
+  }
+
+  langSel.addEventListener('change',function(){
+    if(langSel.value==='其他'){
+      customDiv.classList.add('show');
+      if(scoreSel) scoreSel.disabled=true;
+    }else{
+      customDiv.classList.remove('show');
+      if(customInput) customInput.value='';
+      if(scoreSel) updateScoreSelect(langSel,scoreSel);
+    }
+  });
+
+  if(customBtn){
+    customBtn.addEventListener('click',function(){
+      var name=customInput.value.trim();
+      if(!name) return;
+      if(getAllLanguages().indexOf(name)!==-1) return;
+      customLanguages.push(name);
+      populateAllLangSelects();
+      langSel.value=name;
+      if(scoreSel) updateScoreSelect(langSel,scoreSel);
+      customDiv.classList.remove('show');
+      customInput.value='';
+    });
+  }
+
+  if(scoreSel) updateScoreSelect(langSel,scoreSel);
+}
+
+function addLangRow(){
+  var container=document.getElementById('langContainer');
+  var rowCount=container.querySelectorAll('.lang-item').length;
+  var label=getLangLabel(rowCount);
+
+  var row=document.createElement('div');
+  row.className='lang-item';
+  row.innerHTML=
+    '<span class="lang-label">'+label+'</span><span class="lang-colon">：</span>'+
+    '<select class="lang-select"></select>'+
+    '<span class="score-label">成绩</span><span class="lang-colon">：</span>'+
+    '<select class="score-select" disabled></select>'+
+    '<div class="lang-custom">'+
+      '<input type="text" placeholder="输入语言名称" class="lang-input">'+
+      '<button type="button" class="lang-custom-add-btn">添加</button>'+
+    '</div>';
+  container.appendChild(row);
+
+  populateAllLangSelects();
+  initLangRow(row,rowCount);
+}
+
+// 初始化默认语言行
+populateAllLangSelects();
+document.querySelectorAll('#langContainer .lang-item').forEach(function(item,idx){
+  initLangRow(item,idx);
+});
+
+/* ============ 兴趣特长 ============ */
+var interestIcons={
+  '旅行':'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3-4-1-1 1 3 2 2 3 1-1-1-4 3-2 3.5 4.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+  '骑行':'<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h3l2 3-4.5 5.5L13 8M9 8 5.5 17.5M9 8l5 0M7 5h3l1 3"/>',
+  '皮划艇':'<path d="M3 18s2-1 9-1 9 1 9 1M6 17l-1-4h14l-1 4M12 3v8M9 5l3-2 3 2M4 21l2-2M20 21l-2-2"/>',
+  '电影':'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 8h4M3 12h4M3 16h4M17 8h4M17 12h4M17 16h4"/>',
+  '音乐':'<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>',
+  '健身':'<path d="M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 12l3-3M6 12l-3-3M3 9l3 3-3 3M21 9l-3 3 3 3"/>',
+  '阅读':'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5H6.5A2.5 2.5 0 0 0 4 19.5z"/>',
+  '烹饪':'<path d="M6 13.87V4a2 2 0 0 1 3-1.73V8M6 13.87L4 16M6 13.87h10l-2 2.13H8M8 16v6M12 16v6M16 16v6"/>',
+  '摄影':'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l2-3h8l2 3h3a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  '绘画':'<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.65 0-.43-.16-.82-.43-1.1-.27-.28-.43-.67-.43-1.1 0-.9.75-1.65 1.65-1.65H16c3.3 0 6-2.7 6-6 0-4.97-4.5-9-10-9z"/>',
+  '舞蹈':'<path d="M12 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM10.5 7l-1.5 4 2 3v6h2v-5l2-2-1-4-1.5-2-2 0z"/>',
+  '游戏':'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/>',
+  '钓鱼':'<path d="M18 4v8a4 4 0 0 1-8 0V6M18 4l3 3-3 3M10 18l-4 4M14 18l4 4M12 16v2"/>',
+  '登山':'<path d="M3 20l5-12 4 8 3-6 6 10z"/><path d="M8 8l1-2M14 12l1-2"/>'
+};
+var defaultInterestIcon='<path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2-6.3-4.6L5.7 21l2.3-7.2-6-4.4h7.6z"/>';
+var baseInterests=['旅行','骑行','皮划艇','电影','音乐','健身','阅读','烹饪','摄影','绘画','舞蹈','游戏','钓鱼','登山'];
+var customInterests=[];
+var defaultInterestValues=['旅行'];
+
+function getAllInterests(){
+  return baseInterests.concat(customInterests);
+}
+
+function getInterestIcon(name){
+  return interestIcons[name]||defaultInterestIcon;
+}
+
+function populateAllInterestSelects(){
+  var allInterests=getAllInterests();
+  document.querySelectorAll('.interest-select').forEach(function(sel){
+    var currentVal=sel.value;
+    var isOther=(currentVal==='其他');
+    sel.innerHTML='<option value="">请选择</option>';
+    allInterests.forEach(function(name){
+      var o=document.createElement('option');
+      o.value=name;o.textContent=name;
+      sel.appendChild(o);
+    });
+    var other=document.createElement('option');
+    other.value='其他';other.textContent='其他';
+    sel.appendChild(other);
+    sel.value=isOther?'其他':currentVal;
+  });
+}
+
+function createInterestSlot(){
+  var slot=document.createElement('div');
+  slot.className='interest-slot';
+  slot.innerHTML=
+    '<div class="interest-main">'+
+      '<svg class="interest-icon" viewBox="0 0 24 24"></svg>'+
+      '<select class="interest-select"></select>'+
+    '</div>'+
+    '<div class="interest-custom">'+
+      '<input type="text" placeholder="输入兴趣" class="interest-input">'+
+      '<button type="button" class="interest-custom-add-btn">添加</button>'+
+    '</div>';
+  return slot;
+}
+
+function initInterestSlot(slot,idx){
+  var sel=slot.querySelector('.interest-select');
+  var iconSvg=slot.querySelector('.interest-icon');
+  var customDiv=slot.querySelector('.interest-custom');
+  var customInput=slot.querySelector('.interest-input');
+  var customBtn=slot.querySelector('.interest-custom-add-btn');
+
+  if(defaultInterestValues[idx]){
+    sel.value=defaultInterestValues[idx];
+  }
+  if(sel.value){
+    iconSvg.innerHTML=getInterestIcon(sel.value);
+  }
+
+  sel.addEventListener('change',function(){
+    var val=sel.value;
+    if(val==='其他'){
+      customDiv.classList.add('show');
+    }else{
+      customDiv.classList.remove('show');
+      if(customInput) customInput.value='';
+      if(val){
+        iconSvg.innerHTML=getInterestIcon(val);
+      }else{
+        iconSvg.innerHTML='';
+      }
+    }
+  });
+
+  customBtn.addEventListener('click',function(){
+    var name=customInput.value.trim();
+    if(!name) return;
+    if(getAllInterests().indexOf(name)!==-1) return;
+    customInterests.push(name);
+    populateAllInterestSelects();
+    sel.value=name;
+    iconSvg.innerHTML=getInterestIcon(name);
+    customDiv.classList.remove('show');
+    customInput.value='';
+  });
+}
+
+function addInterestSlot(){
+  var grid=document.getElementById('interestsGrid');
+  var addSlot=grid.querySelector('.interest-add-slot');
+  var slots=grid.querySelectorAll('.interest-slot:not(.interest-add-slot)');
+  var idx=slots.length;
+
+  var newSlot=createInterestSlot();
+  grid.insertBefore(newSlot,addSlot);
+
+  populateAllInterestSelects();
+  initInterestSlot(newSlot,idx);
+}
+
+// 生成5个兴趣槽位
+var grid=document.getElementById('interestsGrid');
+for(var i=0;i<1;i++){
+  grid.appendChild(createInterestSlot());
+}
+// 添加按钮槽位
+var addSlot=document.createElement('div');
+addSlot.className='interest-slot interest-add-slot';
+addSlot.innerHTML='<button type="button" class="interest-add-slot-btn no-print" onclick="addInterestSlot()">添加</button>';
+grid.appendChild(addSlot);
+
+// 初始化兴趣下拉
+populateAllInterestSelects();
+document.querySelectorAll('.interest-slot:not(.interest-add-slot)').forEach(function(slot,idx){
+  initInterestSlot(slot,idx);
+});
+
+// Avatar upload
+function handleAvatarUpload(input){
+  var file=input.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=document.getElementById('avatarImg');
+    var svg=document.getElementById('avatarSvg');
+    img.src=e.target.result;
+    img.style.display='block';
+    svg.style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
+// Skill dots click
+function initSkillBars(){
+  document.querySelectorAll('.skill-bar').forEach(function(bar){
+    bar.addEventListener('click',function(e){
+      var dot=e.target;
+      if(!dot.classList.contains('skill-dot')) return;
+      var dots=Array.from(bar.querySelectorAll('.skill-dot'));
+      var idx=dots.indexOf(dot);
+      dots.forEach(function(d,i){
+        if(i<=idx) d.classList.add('active');
+        else d.classList.remove('active');
+      });
+    });
+  });
+}
+initSkillBars();
+
+// Add skill
+function addSkill(){
+  var name=prompt('请输入技能名称：');
+  if(!name) return;
+  var container=document.querySelector('.skills');
+  var div=document.createElement('div');
+  div.className='skill-item';
+  div.innerHTML='<div class="name" contenteditable="true">'+name+'</div><div class="skill-bar"><div class="skill-dot active"></div><div class="skill-dot"></div><div class="skill-dot"></div><div class="skill-dot"></div><div class="skill-dot"></div></div>';
+  container.appendChild(div);
+  initSkillBars();
+}
+
+// 初始化可选字段（个人主页等）
+var _params=new URLSearchParams(window.location.search);
+var _mode=_params.get('mode')||'edit';
+if(_mode==='preview'){
+  hideEmptyOptionalFields();
+}else{
+  setupOptionalFieldListeners();
+}
+
+// 监听父窗口发送的简历内容（用于后台预览）
+window.addEventListener('message', function(e){
+  if(e.data && e.data.type === 'loadResume' && e.data.content){
+    var resume = document.querySelector('.resume');
+    if(resume){
+      resume.innerHTML = e.data.content;
+      // 恢复兴趣特长的图标（因为 innerHTML 替换后事件监听丢失）
+      document.querySelectorAll('.interest-slot .interest-select').forEach(function(sel){
+        var slot = sel.closest('.interest-slot');
+        if(slot){
+          var iconSvg = slot.querySelector('.interest-icon');
+          if(iconSvg && sel.value){
+            iconSvg.innerHTML = getInterestIcon(sel.value);
+          }
+        }
+      });
+      hideEmptyOptionalFields();
+    }
+  }
+});
+</script>
+
+</body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

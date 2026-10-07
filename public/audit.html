@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工厂审核申请表</title>
+<style>
+@page{size:A4 portrait;margin:5mm 4mm;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+  font-size:11px;
+  color:#333;
+  background:#fff;
+  width:210mm;
+  margin:0 auto;
+}
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+
+td,th{
+  border:1px solid #333;
+  padding:4px 5px;
+  vertical-align:middle;
+  font-size:11px;
+  line-height:1.5;
+}
+th{
+  background:#cce0f5;
+  color:#1a4a7a;
+  font-weight:700;
+  text-align:center;
+}
+.section-title{
+  background:#daeaf8;
+  color:#1a4a7a;
+  font-weight:700;
+  font-size:11px;
+  padding:3px 6px;
+  letter-spacing:0.5px;
+}
+.label-cell{
+  background:#f4f7fb;
+  color:#555;
+  font-size:10px;
+  text-align:left;
+  white-space:nowrap;
+  padding-left:8px;
+}
+.label-cell.auto{white-space:normal;}
+
+input,select{
+  font-family:inherit;
+  font-size:11px;
+  color:#333;
+  border:none;
+  background:transparent;
+  width:100%;
+  outline:none;
+  padding:1px 3px;
+  min-width:0;
+}
+input[type="checkbox"],input[type="radio"]{width:auto;margin:0 1px;}
+input:focus{background:#fffbe6;}
+select{background:transparent;cursor:pointer;}
+input:not([type="checkbox"]):not([type="radio"]):not([type="date"]){
+  text-align:center;
+}
+input[type="date"]{
+  cursor:pointer;
+  padding:1px 3px;
+}
+
+.check-inline{
+  display:flex;
+  flex-wrap:nowrap;
+  gap:0;
+  align-items:center;
+  white-space:nowrap;
+}
+.check-inline label{
+  display:inline-flex;
+  align-items:center;
+  gap:1px;
+  font-size:10px;
+  margin-right:6px;
+}
+.check-inline span{font-size:10px;margin:0 2px;}
+
+.row-input{
+  display:flex;
+  align-items:center;
+  gap:2px;
+  white-space:nowrap;
+}
+.row-input input{width:auto;min-width:30px;}
+
+.submit-row td{
+  border:none;
+  padding:6px 4px 2px;
+  text-align:center;
+}
+.btn{
+  padding:4px 18px;
+  font-size:11px;
+  border-radius:4px;
+  cursor:pointer;
+  font-family:inherit;
+  margin:0 6px;
+  border:1px solid;
+}
+.btn-primary{background:#4a90d9;color:#fff;border-color:#4a90d9;}
+.btn-outline{background:#fff;color:#4a90d9;border-color:#a0c8e8;}
+
+/* 设备单格 */
+.eq-cell{
+  padding:3px 4px !important;
+  font-size:10px;
+  line-height:1.6;
+}
+.eq-item{
+  display:inline-flex;
+  align-items:center;
+  gap:1px;
+  margin-right:6px;
+  white-space:nowrap;
+}
+.eq-item label{min-width:0;}
+.eq-item input{width:35px;min-width:35px;}
+.eq-title{
+  display:block;
+  color:#1a4a7a;
+  font-weight:600;
+  margin-bottom:2px;
+}
+
+/* 客户表格 */
+.client-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.client-table td{padding:4px 5px;vertical-align:middle;}
+.client-table input,.client-table select{
+  font-size:11px;
+  border:none;
+  background:transparent;
+  width:100%;
+  outline:none;
+  padding:2px 4px;
+  text-align:center;
+  min-height:20px;
+}
+.client-table input:focus,.client-table select:focus{
+  background:#fffbe6;
+  border-radius:2px;
+}
+.client-table input[type="date"]{
+  height:22px;
+  cursor:pointer;
+}
+.client-table select{font-size:11px;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<table>
+<!-- 标题 -->
+<tr><td colspan="10" style="text-align:center;padding:6px 0;border:1px solid #333;">
+  <span style="font-size:14px;font-weight:700;color:#1a4a7a;letter-spacing:2px;">工厂审核申请表</span>
+</td></tr>
+
+<!-- ===== 基本信息 ===== -->
+<tr><td colspan="10" class="section-title">■ 基本信息</td></tr>
+<tr>
+  <td class="label-cell auto">工厂名称</td>
+  <td colspan="4"><input type="text" placeholder="中文"></td>
+  <td class="label-cell auto" style="white-space:nowrap;min-width:70px">Factory Name</td>
+  <td colspan="4"><input type="text" placeholder="English"></td>
+</tr>
+<tr>
+  <td class="label-cell auto">工厂地址</td>
+  <td colspan="4"><input type="text" placeholder="中文地址"></td>
+  <td class="label-cell auto">地址（英文）</td>
+  <td colspan="4"><input type="text" placeholder="English address"></td>
+</tr>
+<tr>
+  <td class="label-cell auto">工厂类型</td>
+  <td colspan="3">
+    <div class="check-inline">
+      <label><input type="radio" name="fType"> 外资</label>
+      <label><input type="radio" name="fType"> 合资</label>
+      <label><input type="radio" name="fType"> 国企</label>
+      <label><input type="radio" name="fType"> 民营</label>
+    </div>
+  </td>
+  <td class="label-cell auto">结构</td>
+  <td colspan="5">
+    <div class="check-inline">
+      <label><input type="checkbox"> 钢架</label>
+      <label><input type="checkbox"> 混凝土</label>
+      <label><input type="checkbox"> 其它</label>
+      <span style="margin-left:8px;">成立日期</span>
+      <input type="date" style="width:110px;">
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="label-cell auto">拥有人/法人</td>
+  <td><input type="text" placeholder="姓名"></td>
+  <td class="label-cell auto" style="width:40px;">头衔</td>
+  <td><input type="text" placeholder="职务"></td>
+  <td class="label-cell auto">邮编</td>
+  <td><input type="text" placeholder="邮编"></td>
+  <td class="label-cell auto">传真</td>
+  <td colspan="3"><input type="tel" placeholder="传真号码"></td>
+</tr>
+<tr>
+  <td class="label-cell auto">工厂联系人</td>
+  <td><input type="text" placeholder="姓名"></td>
+  <td class="label-cell auto">电话</td>
+  <td><input type="tel" placeholder="电话"></td>
+  <td class="label-cell auto">邮箱</td>
+  <td colspan="5"><input type="email" placeholder="email@example.com"></td>
+</tr>
+<tr>
+  <td class="label-cell auto">占地面积</td>
+  <td><div class="row-input"><input type="number" placeholder="0"><span>㎡</span></div></td>
+  <td class="label-cell auto">建筑面积</td>
+  <td><div class="row-input"><input type="number" placeholder="0"><span>㎡</span></div></td>
+  <td class="label-cell auto">仓库面积</td>
+  <td><div class="row-input"><input type="number" placeholder="0"><span>㎡</span></div></td>
+  <td class="label-cell auto">厂区构成</td>
+  <td colspan="3"><input type="text" placeholder="如：厂房3/宿舍2/办公楼1" style="font-size:10px;"></td>
+</tr>
+
+<!-- ===== 生产信息 ===== -->
+<tr><td colspan="10" class="section-title">■ 生产信息</td></tr>
+<tr>
+  <td class="label-cell auto">生产类型</td>
+  <td colspan="4">
+    <div class="check-inline">
+      <label><input type="checkbox"> 冷粘</label>
+      <label><input type="checkbox"> 注塑</label>
+      <label><input type="checkbox"> 硫化</label>
+      <label><input type="checkbox"> 工艺鞋</label>
+      <label><input type="checkbox"> 其它</label>
+    </div>
+  </td>
+  <td class="label-cell auto">主要鞋型</td>
+  <td colspan="4"><input type="text" placeholder="如：鞋子、室内拖鞋"></td>
+</tr>
+
+<!-- 设备清单行 -->
+<tr>
+  <td class="label-cell" style="text-align:center;width:20%;">设备清单(台/条)</td>
+  <td colspan="9" class="eq-cell" style="border-left:none;">
+    <div style="display:flex;flex-wrap:wrap;gap:4px 10px;">
+      <div class="eq-item"><label>缝纫机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>高头车</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>外线机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>裘皮机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>冲裁机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>压底机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>前帮机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>后帮机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>流水线</label><input type="number" min="0" placeholder="0"><span>条</span></div>
+      <div class="eq-item"><label>裁断机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:3px;">
+      <div class="eq-item"><label>金属探测仪</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>拉力测试机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>耐磨测试机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>弯折测试机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item"><label>剥离测试机</label><input type="number" min="0" placeholder="0"><span>台</span></div>
+      <div class="eq-item" >
+        <label>其它</label><input type="text" placeholder="名称" style="width:60px;"><input type="number" min="0" placeholder="0" style="width:35px;"><span>台</span>
+      </div>
+      <div class="eq-item" >
+        <label>其它</label><input type="text" placeholder="名称" style="width:60px;"><input type="number" min="0" placeholder="0" style="width:35px;"><span>台</span>
+      </div>
+    </div>
+  </td>
+</tr>
+
+<!-- ===== 人力与产能 ===== -->
+<tr><td colspan="10" class="section-title">■ 人力与产能</td></tr>
+<tr>
+  <td class="label-cell auto">针车线</td>
+  <td colspan="9">
+    <div class="row-input" style="flex-wrap:wrap;gap:6px;">
+      <span>条数</span><input type="number" placeholder="0" style="width:40px;">
+      <span>人数/条</span><input type="number" placeholder="0" style="width:40px;">
+      <span>台数/条</span><input type="number" placeholder="0" style="width:40px;">
+      <span>普通针车</span><input type="number" placeholder="0" style="width:40px;"><span>台</span>
+      <span>特种针车</span><input type="number" placeholder="0" style="width:40px;"><span>台</span>
+      <span>品检/条</span><input type="number" placeholder="0" style="width:40px;"><span>人</span>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="label-cell auto">成型线</td>
+  <td colspan="9">
+    <div class="row-input" style="flex-wrap:wrap;gap:6px;">
+      <span>条数</span><input type="number" placeholder="0" style="width:40px;">
+      <span>人数/条</span><input type="number" placeholder="0" style="width:40px;">
+      <span>品检/条</span><input type="number" placeholder="0" style="width:40px;"><span>人</span>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="label-cell auto">全厂员工</td>
+  <td colspan="9">
+    <div class="row-input" style="flex-wrap:wrap;gap:6px;">
+      <span>总人数</span><input type="number" placeholder="0" style="width:45px;"><span>人</span>
+      <span>外来占比</span><input type="number" placeholder="0" style="width:40px;"><span>%</span>
+      <span>男女比例</span><input type="text" placeholder="6:4" style="width:50px;">
+      <span>经理级</span><input type="number" placeholder="0" style="width:40px;"><span>人</span>
+      <span>车间干部</span><input type="number" placeholder="0" style="width:40px;"><span>人</span>
+      <span>职员</span><input type="number" placeholder="0" style="width:40px;"><span>人</span>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="label-cell auto">品管人员</td>
+  <td colspan="9">
+    <div class="row-input" style="flex-wrap:wrap;gap:6px;">
+      <span>QC</span><input type="number" placeholder="0" style="width:40px;"><span>人</span>
+      <span>QA</span><input type="number" placeholder="0" style="width:40px;"><span>人</span>
+      <span>样品室</span><input type="number" placeholder="0" style="width:40px;"><span>人</span>
+      <span>年产能</span><input type="number" placeholder="0" style="width:70px;"><span>双</span>
+      <span>生产周期</span><input type="text" placeholder="如30-45天" style="width:70px;">
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="label-cell auto">月产能</td>
+  <td colspan="9">
+    <div class="row-input">
+      <span>针车线</span><input type="number" placeholder="0" style="width:70px;"><span>双/月</span>
+      <span>成型线</span><input type="number" placeholder="0" style="width:70px;"><span>双/月</span>
+      <span>样品室</span><input type="number" placeholder="0" style="width:60px;"><span>双/月</span>
+    </div>
+  </td>
+</tr>
+
+<!-- ===== 合作与运营 ===== -->
+<tr><td colspan="10" class="section-title">■ 合作与运营</td></tr>
+<tr>
+  <td class="label-cell auto">销售地区</td>
+  <td colspan="9">
+    <div class="row-input" style="flex-wrap:wrap;gap:6px;">
+      <span>美国</span><input type="number" placeholder="0" style="width:40px;"><span>%</span>
+      <span>加拿大</span><input type="number" placeholder="0" style="width:40px;"><span>%</span>
+      <span>欧洲</span><input type="number" placeholder="0" style="width:40px;"><span>%</span>
+      <span>其它</span><input type="number" placeholder="0" style="width:40px;"><span>%</span>
+      <span>生产品牌</span><input type="text" placeholder="独立品牌名" style="width:100px;">
+      <span>流失率</span><input type="number" placeholder="0" style="width:40px;"><span>%</span>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="label-cell auto">面料占比</td>
+  <td colspan="4">
+    <div class="row-input">
+      <span>皮</span><input type="number" placeholder="0" style="width:35px;"><span>%</span>
+      <span>PU</span><input type="number" placeholder="0" style="width:35px;"><span>%</span>
+      <span>帆布</span><input type="number" placeholder="0" style="width:35px;"><span>%</span>
+      <span>其它</span><input type="number" placeholder="0" style="width:35px;"><span>%</span>
+    </div>
+  </td>
+  <td class="label-cell auto">品质政策</td>
+  <td colspan="4"><input type="text" placeholder="如：满意率100%"></td>
+</tr>
+<tr>
+  <td class="label-cell auto">淡季/旺季</td>
+  <td colspan="4"><div class="row-input"><span>淡季</span><input type="text" placeholder="如1-3月" style="width:80px;"><span>旺季</span><input type="text" placeholder="如9-12月" style="width:80px;"></div></td>
+  <td class="label-cell auto">人员流失率</td>
+  <td colspan="4"><div class="row-input"><input type="number" placeholder="0"><span>%</span></div></td>
+</tr>
+
+<!-- ===== 客户审核信息 ===== -->
+<tr><td colspan="10" class="section-title">■ 客户审核信息（Wal-mart / Payless / Target / JC.Penny / Kohl's / Meldisco 等）</td></tr>
+<tr>
+  <td colspan="10" style="padding:0;border:1px solid #333;">
+    <table class="client-table">
+      <colgroup>
+        <col style="width:13.7%;">
+        <col style="width:13.7%;">
+        <col style="width:13.7%;">
+        <col style="width:13.7%;">
+        <col style="width:13.7%;">
+        <col style="width:13.7%;">
+        <col style="width:13.7%;">
+        <col style="width:4.1%;">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>客人名称</th>
+          <th>工厂代号</th>
+          <th>贸易商</th>
+          <th>最近评估时间</th>
+          <th>评估结果</th>
+          <th>审核员</th>
+          <th>备注</th>
+          <th><button onclick="addRow()" style="font-size:10px;padding:1px 5px;color:#4a90d9;border:1px solid #4a90d9;background:#eef5ff;border-radius:3px;cursor:pointer;">+</button></th>
+        </tr>
+      </thead>
+      <tbody id="clientBody">
+        <tr>
+          <td><input type="text" placeholder="如：沃尔玛"></td>
+          <td><input type="text" placeholder="代号"></td>
+          <td><input type="text" placeholder="贸易商"></td>
+          <td><input type="date" onclick="if(this.showPicker)this.showPicker()"></td>
+          <td>
+            <select>
+              <option value="">请选择</option>
+              <option>通过</option>
+              <option>待整改</option>
+              <option>不通过</option>
+              <option>待审核</option>
+            </select>
+          </td>
+          <td><input type="text" placeholder="姓名"></td>
+          <td><input type="text" placeholder="备注"></td>
+          <td><button onclick="delRow(this)" style="font-size:12px;color:#c00;border:none;background:none;cursor:pointer;">×</button></td>
+        </tr>
+        <tr>
+          <td><input type="text"></td>
+          <td><input type="text"></td>
+          <td><input type="text"></td>
+          <td><input type="date" onclick="if(this.showPicker)this.showPicker()"></td>
+          <td>
+            <select>
+              <option value="">请选择</option>
+              <option>通过</option>
+              <option>待整改</option>
+              <option>不通过</option>
+              <option>待审核</option>
+            </select>
+          </td>
+          <td><input type="text"></td>
+          <td><input type="text"></td>
+          <td><button onclick="delRow(this)" style="font-size:12px;color:#c00;border:none;background:none;cursor:pointer;">×</button></td>
+        </tr>
+        <tr>
+          <td><input type="text"></td>
+          <td><input type="text"></td>
+          <td><input type="text"></td>
+          <td><input type="date" onclick="if(this.showPicker)this.showPicker()"></td>
+          <td>
+            <select>
+              <option value="">请选择</option>
+              <option>通过</option>
+              <option>待整改</option>
+              <option>不通过</option>
+              <option>待审核</option>
+            </select>
+          </td>
+          <td><input type="text"></td>
+          <td><input type="text"></td>
+          <td><button onclick="delRow(this)" style="font-size:12px;color:#c00;border:none;background:none;cursor:pointer;">×</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
+
+<!-- 提交 -->
+<tr class="submit-row">
+  <td colspan="10">
+    <button class="btn btn-primary" onclick="validateAndSave()">保存</button>
+    <button class="btn btn-outline" onclick="printPreview()">打印预览</button>
+  </td>
+</tr>
+</table>
+
+<script>
+function addRow(){
+  var tbody=document.getElementById('clientBody');
+  var tr=document.createElement('tr');
+  tr.innerHTML=
+    '<td><input type="text"></td>'+
+    '<td><input type="text"></td>'+
+    '<td><input type="text"></td>'+
+    '<td><input type="date" onclick="if(this.showPicker)this.showPicker()"></td>'+
+    '<td><select><option value="">请选择</option><option>通过</option><option>待整改</option><option>不通过</option><option>待审核</option></select></td>'+
+    '<td><input type="text"></td>'+
+    '<td><input type="text"></td>'+
+    '<td><button onclick="delRow(this)" style="font-size:12px;color:#c00;border:none;background:none;cursor:pointer;">×</button></td>';
+  tbody.appendChild(tr);
+}
+function delRow(btn){
+  var tbody=document.getElementById('clientBody');
+  if(tbody.rows.length>1) btn.closest('tr').remove();
+}
+
+// 验证基本信息是否完整
+function validateBasicInfo(){
+  var companyName = document.querySelector('tr:nth-child(3) td:nth-child(2) input');
+  var companyAddr = document.querySelector('tr:nth-child(4) td:nth-child(2) input');
+  var contactName = document.querySelector('tr:nth-child(6) td:nth-child(2) input');
+  var contactPhone = document.querySelector('tr:nth-child(7) td:nth-child(4) input');
+  var factoryType = document.querySelector('input[name="fType"]:checked');
+
+  if(!companyName || !companyName.value.trim()) return '工厂名称（中文）不能为空';
+  if(!companyAddr || !companyAddr.value.trim()) return '工厂地址不能为空';
+  if(!contactName || !contactName.value.trim()) return '拥有人/法人姓名不能为空';
+  if(!contactPhone || !contactPhone.value.trim()) return '工厂联系人电话不能为空';
+  if(!factoryType) return '请选择工厂类型（外资/合资/国企/民营）';
+  return '';
+}
+
+// 验证客户审核信息是否完整
+function validateClientInfo(){
+  var rows = document.querySelectorAll('#clientBody tr');
+  var filledRows = 0;
+  for(var i=0;i<rows.length;i++){
+    var inputs = rows[i].querySelectorAll('input');
+    var select = rows[i].querySelector('select');
+    var hasData = false;
+    for(var j=0;j<inputs.length;j++){
+      if(inputs[j].value.trim()){ hasData = true; break; }
+    }
+    if(select && select.value.trim()) hasData = true;
+    if(hasData) filledRows++;
+  }
+  if(filledRows === 0) return '请至少填写一行客户审核信息';
+  return '';
+}
+
+// 获取审核表数据（供父页面调用）
+function getAuditData(){
+  var table = document.querySelector('body > table');
+  var companyInput = document.querySelector('tr:nth-child(3) td:nth-child(2) input');
+  var emailInput = document.querySelector('tr:nth-child(7) td:nth-child(6) input');
+  return {
+    name: companyInput ? companyInput.value : '',
+    email: emailInput ? emailInput.value : '',
+    content: table ? table.outerHTML : ''
+  };
+}
+
+function validateAndSave(){
+  var basicErr = validateBasicInfo();
+  if(basicErr){ alert('基本信息不完整：' + basicErr); return; }
+  var clientErr = validateClientInfo();
+  if(clientErr){ alert('客户审核信息不完整：' + clientErr); return; }
+  alert('保存成功！');
+}
+
+// 打印预览：在新窗口中打开静态内容
+function printPreview(){
+  var table = document.querySelector('body > table').cloneNode(true);
+
+  // 移除按钮行
+  var submitRow = table.querySelector('.submit-row');
+  if(submitRow) submitRow.remove();
+
+  // 将表单元素转换为静态文本
+  table.querySelectorAll('input, select').forEach(function(el){
+    var span = document.createElement('span');
+    span.style.cssText = 'display:inline-block;min-height:16px;color:#333;';
+    if(el.type === 'checkbox'){
+      span.textContent = el.checked ? '☑ ' + (el.nextElementSibling ? el.nextElementSibling.textContent : '') : '☐ ' + (el.nextElementSibling ? el.nextElementSibling.textContent : '');
+    }else if(el.type === 'radio'){
+      span.textContent = el.checked ? '● ' + (el.nextElementSibling ? el.nextElementSibling.textContent : '') : '○ ' + (el.nextElementSibling ? el.nextElementSibling.textContent : '');
+    }else if(el.tagName === 'SELECT'){
+      span.textContent = el.value || '';
+    }else{
+      span.textContent = el.value || '';
+    }
+    // 保留父节点的样式
+    if(el.parentNode.classList.contains('check-inline')){
+      span.style.whiteSpace = 'nowrap';
+      span.style.marginRight = '6px';
+    }
+    el.parentNode.replaceChild(span, el);
+  });
+
+  // 移除 addRow/delRow 按钮
+  table.querySelectorAll('button').forEach(function(btn){
+    if(btn.textContent === '+' || btn.textContent === '×'){
+      btn.remove();
+    }
+  });
+
+  var printHtml = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>工厂审核申请表 - 打印预览</title>
+<style>
+@page{size:A4 portrait;margin:5mm 4mm;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:11px;color:#333;background:#fff;padding:10px;}
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+td,th{border:1px solid #333;padding:4px 5px;vertical-align:middle;font-size:11px;line-height:1.5;}
+th{background:#cce0f5;color:#1a4a7a;font-weight:700;text-align:center;}
+.section-title{background:#daeaf8;color:#1a4a7a;font-weight:700;font-size:11px;padding:3px 6px;letter-spacing:0.5px;}
+.label-cell{background:#f4f7fb;color:#555;font-size:10px;text-align:right;white-space:nowrap;}
+.label-cell.auto{white-space:normal;}
+.eq-cell{padding:3px 4px !important;font-size:10px;line-height:1.6;}
+.client-table td{padding:4px 5px;vertical-align:middle;border:1px solid #333;}
+</style>
+</head>
+<body>` + table.outerHTML + `</body></html>`;
+
+  var printWindow = window.open('', '_blank');
+  printWindow.document.write(printHtml);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(function(){ printWindow.print(); }, 500);
+}
+</script>
+
+<style>
+@media print{
+  @page{size:A4 portrait;margin:5mm 4mm;}
+  body{width:100%!important;background:#fff!important;padding:0;margin:0;}
+  .btn{display:none!important;}
+  td,th{padding:3px 4px;font-size:10px;}
+  .section-title,.section-title+tr th{background:#cce0f5!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .eq-item input{width:30px;min-width:30px;}
+}
+</style>
+</body>
+</html>

@@ -1,13 +1,14 @@
-import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { LogIn, LogOut, Settings } from "lucide-react";
 
 const navItems = [
   { name: "保险计算", path: "/insurance" },
+  { name: "工厂审核", path: "/audit", external: true },
   { name: "我的作品", path: "/works" },
   { name: "好友留言", path: "/message" },
   { name: "我的简历", path: "/aboutme" },
+  { name: "简历模板", path: "/resume-template", external: true },
 ];
 
 export default function Navbar() {
@@ -23,15 +24,25 @@ export default function Navbar() {
   return (
     <div className="nav-bar-wrapper">
       <div className="nav-bar">
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={location.pathname === item.path ? "active" : ""}
-          >
-            {item.name}
-          </Link>
-        ))}
+        {navItems.map((item) =>
+          item.external ? (
+            <a
+              key={item.path}
+              href={item.path}
+              className={location.pathname === item.path ? "active" : ""}
+            >
+              {item.name}
+            </a>
+          ) : (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={location.pathname === item.path ? "active" : ""}
+            >
+              {item.name}
+            </Link>
+          )
+        )}
         
         {user ? (
           <>

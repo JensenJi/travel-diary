@@ -1,0 +1,24 @@
+{
+  "name": "Jensen Ji - 个人主页",
+  "short_name": "Jensen Ji",
+  "description": "一个做了30多年鞋服爱好编程退休老灯的主页",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#dbe08c",
+  "theme_color": "#dbe08c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
