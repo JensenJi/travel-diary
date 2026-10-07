@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "@/pages/Home";
-import Travel from "@/pages/Travel";
+import Insurance from "@/pages/Insurance";
 import Works from "@/pages/Works";
 import Message from "@/pages/Message";
 import SiteMap from "@/pages/SiteMap";
@@ -19,7 +19,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/aboutme" element={<Home />} />
-              <Route path="/travel" element={<Travel />} />
+              <Route path="/insurance" element={<Insurance />} />
               <Route path="/works" element={<Works />} />
               <Route path="/message" element={<Message />} />
               <Route path="/sitemap" element={<SiteMap />} />

@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import { Home, BookOpen, Briefcase, MessageCircle, List, ChevronRight } from "lucide-react";
+import { Home, Calculator, Briefcase, MessageCircle, List, ChevronRight } from "lucide-react";
 
 const siteStructure = [
   {
@@ -16,13 +16,14 @@ const siteStructure = [
     ],
   },
   {
-    name: "旅行日志",
-    icon: BookOpen,
-    path: "/travel",
-    description: "记录旅行经历，包含攻略、美食、住宿等信息",
+    name: "保险计算",
+    icon: Calculator,
+    path: "/insurance",
+    description: "社保养老金估算工具，支持城乡居民养老与职工养老、多段跨省工作经历、断缴补缴与延迟退休测算",
     children: [
-      { name: "云南丽江古城之旅", path: "/travel#1" },
-      { name: "新疆伊犁草原行", path: "/travel#2" },
+      { name: "城乡居民养老保险", path: "/insurance" },
+      { name: "职工养老保险", path: "/insurance" },
+      { name: "政策参考数据", path: "/insurance" },
     ],
   },
   {

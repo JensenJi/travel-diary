@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { LogIn, LogOut, Settings } from "lucide-react";
 
 const navItems = [
-  { name: "我的旅行", path: "/travel" },
+  { name: "保险计算", path: "/insurance" },
   { name: "我的作品", path: "/works" },
   { name: "好友留言", path: "/message" },
   { name: "我的简历", path: "/aboutme" },

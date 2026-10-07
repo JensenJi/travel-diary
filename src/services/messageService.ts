@@ -41,7 +41,7 @@ const mockMessages: Message[] = [
     userId: "mock-user-1",
     userName: "张明",
     userEmail: "zhang@example.com",
-    content: "非常优秀的个人主页！旅行经历很丰富，照片拍得很美！",
+    content: "非常优秀的个人主页！内容很丰富，设计得很漂亮！",
     createdAt: new Date("2024-01-15T10:30:00"),
   },
   {
@@ -49,7 +49,7 @@ const mockMessages: Message[] = [
     userId: "mock-user-2",
     userName: "李华",
     userEmail: "li@example.com",
-    content: "看了您的旅行足迹，很羡慕！有机会一定要去西藏看看。",
+    content: "保险计算工具很实用，帮我算清楚了退休金，谢谢分享！",
     createdAt: new Date("2024-01-14T15:20:00"),
   },
   {
@@ -65,7 +65,7 @@ const mockMessages: Message[] = [
     userId: "mock-user-4",
     userName: "陈伟",
     userEmail: "chen@example.com",
-    content: "去过这么多地方，真是令人敬佩！照片构图很棒！",
+    content: "作品都很棒，真是令人敬佩！期待更多实用工具！",
     createdAt: new Date("2024-01-12T14:10:00"),
   },
   {
@@ -73,7 +73,7 @@ const mockMessages: Message[] = [
     userId: "mock-user-5",
     userName: "刘洋",
     userEmail: "liu@example.com",
-    content: "从您的经历中学到了很多，希望以后也能像您一样到处旅行！",
+    content: "从您的经历中学到了很多，希望以后也能像您一样优秀！",
     createdAt: new Date("2024-01-11T11:30:00"),
   },
 ];
