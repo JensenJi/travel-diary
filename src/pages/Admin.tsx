@@ -36,8 +36,9 @@ export default function Admin() {
     }
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleString("zh-CN", {
+  const formatDate = (date: string | Date) => {
+    const d = typeof date === "string" ? new Date(date) : date;
+    return d.toLocaleString("zh-CN", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",

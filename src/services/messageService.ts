@@ -1,13 +1,4 @@
-import {
-  collection,
-  addDoc,
-  getDocs,
-  serverTimestamp,
-  query,
-  orderBy,
-  Timestamp,
-} from "firebase/firestore";
-import { db } from "../firebase/config";
+const API_BASE_URL = "/api";
 
 export interface Message {
   id: string;
@@ -15,96 +6,89 @@ export interface Message {
   userName: string;
   userEmail: string;
   content: string;
-  createdAt: Date;
+  createdAt: string | Date;
+  status?: string;
+  reply?: string;
 }
 
-export const saveMessage = async (
-  userId: string,
-  userName: string,
-  userEmail: string,
-  content: string
-): Promise<string> => {
-  if (!db) throw new Error("留言功能未配置");
-  const docRef = await addDoc(collection(db, "messages"), {
-    userId,
-    userName,
-    userEmail,
-    content,
-    createdAt: serverTimestamp(),
+export const getMessages = async (status?: string): Promise<Message[]> => {
+  const token = localStorage.getItem("token");
+  const params = status ? `?status=${status}` : "";
+  const res = await fetch(`${API_BASE_URL}/messages${params}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
-  return docRef.id;
+  if (!res.ok) throw new Error("获取留言失败");
+  const text = await res.text();
+  try {
+    const data = JSON.parse(text);
+    return data.messages || [];
+  } catch (e) {
+    console.error("getMessages JSON parse error, response text:", text);
+    throw e;
+  }
 };
 
-// 模拟留言数据
-const mockMessages: Message[] = [
-  {
-    id: "mock1",
-    userId: "mock-user-1",
-    userName: "张明",
-    userEmail: "zhang@example.com",
-    content: "非常优秀的个人主页！内容很丰富，设计得很漂亮！",
-    createdAt: new Date("2024-01-15T10:30:00"),
-  },
-  {
-    id: "mock2",
-    userId: "mock-user-2",
-    userName: "李华",
-    userEmail: "li@example.com",
-    content: "保险计算工具很实用，帮我算清楚了退休金，谢谢分享！",
-    createdAt: new Date("2024-01-14T15:20:00"),
-  },
-  {
-    id: "mock3",
-    userId: "mock-user-3",
-    userName: "王芳",
-    userEmail: "wang@example.com",
-    content: "简历做得很专业，工作经历很丰富！期待看到更多精彩内容。",
-    createdAt: new Date("2024-01-13T09:45:00"),
-  },
-  {
-    id: "mock4",
-    userId: "mock-user-4",
-    userName: "陈伟",
-    userEmail: "chen@example.com",
-    content: "作品都很棒，真是令人敬佩！期待更多实用工具！",
-    createdAt: new Date("2024-01-12T14:10:00"),
-  },
-  {
-    id: "mock5",
-    userId: "mock-user-5",
-    userName: "刘洋",
-    userEmail: "liu@example.com",
-    content: "从您的经历中学到了很多，希望以后也能像您一样优秀！",
-    createdAt: new Date("2024-01-11T11:30:00"),
-  },
-];
+export const saveMessage = async (
+  _userId: string,
+  _userName: string,
+  _userEmail: string,
+  content: string
+): Promise<string> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("请先登录");
+  const res = await fetch(`${API_BASE_URL}/messages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ content }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "发布留言失败");
+  return data.message.id;
+};
 
-export const getMessages = async (): Promise<Message[]> => {
-  try {
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-    const querySnapshot = await getDocs(q);
+export const updateMessage = async (id: string, content: string): Promise<void> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("请先登录");
+  const res = await fetch(`${API_BASE_URL}/messages/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ content }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "编辑留言失败");
+};
 
-    const realMessages = querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        userId: data.userId,
-        userName: data.userName,
-        userEmail: data.userEmail,
-        content: data.content,
-        createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
-      };
-    });
+export const reviewMessage = async (
+  id: string,
+  status: string,
+  reply: string
+): Promise<void> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("请先登录");
+  const res = await fetch(`${API_BASE_URL}/messages/${id}/review`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status, reply }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "审核操作失败");
+};
 
-    // 如果没有真实数据，返回模拟数据
-    if (realMessages.length === 0) {
-      return mockMessages;
-    }
-
-    // 如果有真实数据，把模拟数据追加到后面
-    return [...realMessages, ...mockMessages];
-  } catch (error) {
-    console.error("加载留言失败，使用模拟数据:", error);
-    return mockMessages;
-  }
+export const deleteMessage = async (id: string): Promise<void> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("请先登录");
+  const res = await fetch(`${API_BASE_URL}/messages/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("删除留言失败");
 };

@@ -1,14 +1,13 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { auth } from "../firebase/config";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  User,
-  sendPasswordResetEmail,
-  updateProfile,
-} from "firebase/auth";
+
+const API_BASE_URL = "/api";
+const ADMIN_EMAIL = "jensenji@sohu.com";
+
+interface User {
+  id: string;
+  email: string;
+  username: string;
+}
 
 interface AuthContextType {
   user: User | null;
@@ -16,6 +15,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, username: string) => Promise<void>;
   logout: () => Promise<void>;
+  changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
 }
 
@@ -38,40 +38,101 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       setLoading(false);
       return;
     }
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return unsubscribe;
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const text = await res.text();
+          try {
+            const data = JSON.parse(text);
+            setUser(data.user);
+          } catch {
+            localStorage.removeItem("token");
+          }
+        } else {
+          localStorage.removeItem("token");
+        }
+      } catch {
+        localStorage.removeItem("token");
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   const login = async (email: string, password: string) => {
-    if (!auth) throw new Error("登录功能未配置");
-    await signInWithEmailAndPassword(auth, email, password);
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error("服务器返回: " + text.substring(0, 50));
+    }
+    if (!res.ok) throw new Error(data.error || "登录失败");
+    localStorage.setItem("token", data.token);
+    setUser(data.user);
   };
 
   const register = async (email: string, password: string, username: string) => {
-    if (!auth) throw new Error("注册功能未配置");
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(userCredential.user, {
-      displayName: username,
+    const res = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, username }),
     });
-    setUser(userCredential.user);
+    const text = await res.text();
+    try {
+      const data = JSON.parse(text);
+      if (!res.ok) throw new Error(data.error || "注册失败");
+      localStorage.setItem("token", data.token);
+      setUser(data.user);
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        console.error("register JSON parse error, response text:", text);
+      }
+      throw e;
+    }
   };
 
   const logout = async () => {
-    if (!auth) return;
-    await signOut(auth);
+    localStorage.removeItem("token");
     setUser(null);
   };
 
-  const forgotPassword = async (email: string) => {
-    if (!auth) throw new Error("密码重置功能未配置");
-    await sendPasswordResetEmail(auth, email);
+  const changePassword = async (oldPassword: string, newPassword: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("未登录");
+    const res = await fetch(`${API_BASE_URL}/auth/password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error("服务器返回: " + text.substring(0, 50));
+    }
+    if (!res.ok) throw new Error(data.error || "修改失败");
+  };
+
+  const forgotPassword = async (_email: string) => {
+    throw new Error("密码重置功能暂未开放");
   };
 
   return (
@@ -82,6 +143,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         login,
         register,
         logout,
+        changePassword,
         forgotPassword,
       }}
     >
@@ -89,3 +151,5 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     </AuthContext.Provider>
   );
 };
+
+export { ADMIN_EMAIL };

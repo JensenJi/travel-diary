@@ -38,8 +38,8 @@ export default function Message() {
     setSubmitting(true);
     try {
       await saveMessage(
-        user.uid,
-        user.displayName || user.email?.split("@")[0] || "用户",
+        user.id,
+        user.username || user.email?.split("@")[0] || "用户",
         user.email || "",
         messageContent.trim()
       );
@@ -54,8 +54,9 @@ export default function Message() {
     }
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleString("zh-CN", {
+  const formatDate = (date: string | Date) => {
+    const d = typeof date === "string" ? new Date(date) : date;
+    return d.toLocaleString("zh-CN", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",

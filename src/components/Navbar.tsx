@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth, ADMIN_EMAIL } from "@/context/AuthContext";
 import { LogIn, LogOut, Settings } from "lucide-react";
 
 const navItems = [
@@ -46,7 +46,7 @@ export default function Navbar() {
         
         {user ? (
           <>
-            {user.email === import.meta.env.VITE_ADMIN_EMAIL && (
+            {user.email === ADMIN_EMAIL && (
               <Link
                 to="/admin"
                 className={location.pathname === "/admin" ? "active" : ""}
