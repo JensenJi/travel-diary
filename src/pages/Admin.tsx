@@ -67,7 +67,7 @@ export default function Admin() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="pt-16">
-        <div className="max-w-4xl mx-auto px-8 py-8">
+        <div className="max-w-[210mm] mx-auto px-8 py-8">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">后台管理</h1>

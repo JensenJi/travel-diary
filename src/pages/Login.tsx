@@ -54,7 +54,7 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-[#dbe08c]/20 to-[#89800c]/20">
       <Navbar />
       <div className="pt-16">
-        <div className="max-w-4xl mx-auto mt-8 mb-8 px-4">
+        <div className="max-w-[210mm] mx-auto mt-8 mb-8 px-4">
           <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
             <div className="bg-[#dbe08c] p-4">
               <h2 className="text-2xl font-bold text-center text-[#89800c]">

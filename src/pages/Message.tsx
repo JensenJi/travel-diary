@@ -69,7 +69,7 @@ export default function Message() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="pt-16">
-        <div className="max-w-4xl mx-auto px-8 py-8">
+        <div className="max-w-[210mm] mx-auto px-8 py-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">好友留言</h1>
             <p className="text-gray-600">查看网友留言并参与讨论</p>

@@ -10,10 +10,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 .site-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:#dbe08c;display:flex;justify-content:center;}
-.site-nav-inner{display:flex;max-width:56rem;width:100%;}
+.site-nav-inner{display:flex;max-width:210mm;width:100%;}
 .site-nav a{font-size:16px;color:#89800c;padding:10px 20px;text-decoration:none;font-weight:bold;transition:all 0.2s;position:relative;}
 .site-nav a:hover,.site-nav a.active{color:#fff;background:#d1d678;}
 .site-nav a:not(:last-child)::after{content:"";position:absolute;right:0;top:25%;bottom:25%;width:1px;background:#fff;}
+@media print{.site-nav{display:none;}}
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{height:100%;min-height:100vh;}
   body{
@@ -43,7 +44,7 @@
     background:#f0f2f5;
   }
   .resume{
-    width:880px;
+    width:210mm;
     max-width:100%;
     background:#fff;
     overflow:hidden;
@@ -53,7 +54,7 @@
     flex:1;
   }
   @media print{
-    body{background:#f0f2f5!important;}
+    body{background:#fff!important;}
     .resume{
       min-height:297mm;
       height:297mm!important;
@@ -62,6 +63,7 @@
       margin:0 auto;
       width:210mm;
       background:#fff!important;
+      box-shadow:none;
     }
     .sidebar{
       background:#f0f2f5!important;
@@ -410,13 +412,13 @@
 </head>
 <body style="padding-top:44px;">
 <nav class="site-nav"><div class="site-nav-inner">
-<a href="/">首页</a>
 <a href="/insurance">保险计算</a>
 <a href="/audit.html">工厂审核</a>
 <a href="/works">我的作品</a>
 <a href="/message">好友留言</a>
 <a href="/aboutme">我的简历</a>
 <a href="/resume-template.html" class="active">简历模板</a>
+<a href="/login">登录/注册</a>
 </div></nav>
 <script>
 (function(){

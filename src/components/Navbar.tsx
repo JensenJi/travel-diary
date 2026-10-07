@@ -91,7 +91,7 @@ export default function Navbar() {
           display: flex;
           padding: 0;
           width: 100%;
-          max-width: 56rem;
+          max-width: 210mm;
         }
         .nav-bar a, .nav-bar button {
           font-size: 16px;

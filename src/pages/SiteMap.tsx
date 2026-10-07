@@ -60,7 +60,7 @@ export default function SiteMap() {
       <Navbar />
       <div className="pt-16">
 
-        <div className="max-w-4xl mx-auto px-8 py-8">
+        <div className="max-w-[210mm] mx-auto px-8 py-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-800 mb-4">网站地图</h1>
             <p className="text-gray-600">帮助您快速了解网站结构</p>
