@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import { User, Lock, Mail, AlertCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
@@ -17,7 +17,7 @@ export default function Login() {
   const { login, register } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError("");
   };
@@ -54,7 +54,7 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-[#dbe08c]/20 to-[#89800c]/20">
       <Navbar />
       <div className="pt-16">
-        <div className="max-w-[210mm] mx-auto mt-8 mb-8 px-4">
+        <div className="max-w-[210mm] mx-auto mt-4 sm:mt-8 mb-4 sm:mb-8 px-4">
           <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
             <div className="bg-[#dbe08c] p-4">
               <h2 className="text-2xl font-bold text-center text-[#89800c]">
@@ -69,7 +69,7 @@ export default function Login() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-4 sm:space-y-6">
               {!isLogin && (
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#89800c]" />

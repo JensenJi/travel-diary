@@ -15,7 +15,7 @@ const works = [
     id: 7,
     title: "许乐 XULOVE 品质商城",
     description: "专业、共创、共管、共赢 | 由行业人共创的品质商城，具备订单管理、商品管理、用户管理等功能。",
-    image: "https://picsum.photos/seed/xulove2024/400/300",
+    image: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=online%20shopping%20mall%20e-commerce%20website%20interface%20with%20product%20grid%20shopping%20cart%20modern%20clean%20blue%20white%20UI%20design&image_size=landscape_4_3",
     tags: ["专业", "共创", "共管", "共赢"],
     url: "https://www.xulove.com",
   },
@@ -23,7 +23,7 @@ const works = [
     id: 8,
     title: "快链ABC 全国美味地图",
     description: "寻味大江南北，吃遍全国 | 汇聚各地特色美食地图，一键直达身边好味道，让每一餐都不将就。",
-    image: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+    image: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20regional%20food%20map%20with%20local%20specialties%20fruits%20snacks%20dried%20goods%20tea%20from%20different%20provinces%20colorful%20food%20photography&image_size=landscape_4_3",
     tags: ["美味地图", "寻味", "一键直达"],
     url: "https://www.qlabc.com",
   },
@@ -31,7 +31,7 @@ const works = [
     id: 2,
     title: "搜索在线",
     description: "你手上的专业人才库，搜索在线，精准匹配，让人才触手可及。",
-    image: "https://picsum.photos/seed/ssol/400/300",
+    image: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20job%20recruitment%20website%20dashboard%20with%20business%20people%20office%20workers%20white%20collar%20blue%20collar%20resume%20search%20interface&image_size=landscape_4_3",
     tags: ["人才库", "搜索", "在线"],
     url: "https://www.ssol.cn",
   },
@@ -76,7 +76,7 @@ export default function Works() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="pt-16">
-        <div className="max-w-4xl mx-auto px-8 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 py-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-800 mb-4">我的作品</h1>
             <p className="text-gray-600">这里展示了我制作的一些网页项目</p>

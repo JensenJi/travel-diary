@@ -70,6 +70,11 @@
   .bubble-container {
     overflow: hidden;
   }
+
+  /* 登录注册页：表单居中、缩小内边距 */
+  .max-w-\[210mm\]:not(.nav-bar) {
+    width: 100%;
+  }
 }
 
 :root {

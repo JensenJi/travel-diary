@@ -109,7 +109,7 @@ export default function Navbar() {
         }
         .nav-bar {
           display: flex;
-          padding: 0;
+          padding: 0 16px;
           width: 100%;
           max-width: 210mm;
           position: relative;
@@ -129,7 +129,7 @@ export default function Navbar() {
           background: none;
           border: none;
           cursor: pointer;
-          display: inline-flex;
+          display: flex;
           align-items: center;
           gap: 4px;
         }
@@ -147,6 +147,7 @@ export default function Navbar() {
           bottom: 25%;
           width: 1px;
           background: rgba(137, 128, 12, 0.3);
+          pointer-events: none;
         }
         .nav-links a:hover,
         .nav-links a.active,
