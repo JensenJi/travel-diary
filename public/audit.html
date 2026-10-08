@@ -5,16 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>工厂审核申请表</title>
 <style>
-.site-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:#dbe08c;display:flex;justify-content:center;}
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:#f4f6dc;border-bottom:1px solid #dbe08c;display:flex;justify-content:center;}
 .site-nav-inner{display:flex;max-width:210mm;width:100%;}
 .site-nav-links{display:flex;width:100%;}
 .site-nav a{font-size:16px;color:#89800c;padding:10px 20px;text-decoration:none;font-weight:bold;transition:all 0.2s;position:relative;display:inline-flex;align-items:center;gap:4px;}
 .site-nav a:hover,.site-nav a.active{color:#fff;background:#d1d678;}
 .site-nav-links a:first-child{padding-left:0;}
 .site-nav-links a:last-child{padding-right:0;}
-.site-nav-links a:not(:last-child)::after{content:"";position:absolute;right:0;top:25%;bottom:25%;width:1px;background:#fff;}
+.site-nav-links a:not(:last-child)::after{content:"";position:absolute;right:0;top:25%;bottom:25%;width:1px;background:rgba(137,128,12,.3);}
 .site-nav-toggle{display:none;background:none;border:none;color:#89800c;font-size:24px;line-height:1;padding:8px 14px;cursor:pointer;}
 .site-nav-mask{display:none;}
+.site-footer{width:100vw;margin:40px 0 0 calc(50% - 50vw);background:#f4f6dc;border-top:1px solid #dbe08c;text-align:center;padding:24px 16px;font-size:14px;color:#4b5563;line-height:1.8;}
+.site-footer p{margin:0;}
+.site-footer .sub{font-size:12px;color:#6b7280;margin-top:4px;}
 @media(max-width:768px){
 body{width:100%;overflow-x:auto;}
 table{min-width:720px;}
@@ -22,13 +25,13 @@ table{min-width:720px;}
 .site-nav-toggle{display:block;align-self:flex-start;}
 .site-nav-links{display:none;flex-direction:column;width:100%;}
 body.nav-open .site-nav-links{display:flex;}
-.site-nav a{width:100%;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.5);writing-mode:horizontal-tb;white-space:nowrap;}
+.site-nav a{width:100%;padding:14px 20px;border-bottom:1px solid rgba(137,128,12,.2);writing-mode:horizontal-tb;white-space:nowrap;}
 .site-nav-links a:first-child{padding-left:20px;}
 .site-nav-links a:last-child{padding-right:20px;}
 .site-nav-links a:not(:last-child)::after{display:none;}
 body.nav-open .site-nav-mask{display:block;position:fixed;top:44px;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:9998;}
 }
-@media print{.site-nav{display:none;}body{padding-top:0!important;}}
+@media print{.site-nav{display:none;}.site-footer{display:none;}body{padding-top:0!important;}}
 @page{size:A4 portrait;margin:5mm 4mm;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
@@ -656,5 +659,9 @@ th{background:#cce0f5;color:#1a4a7a;font-weight:700;text-align:center;}
   .eq-item input{width:30px;min-width:30px;}
 }
 </style>
+<footer class="site-footer">
+  <p>© 2026 JensenJi的个人主页 All Rights Reserved</p>
+  <p class="sub">本网站为个人主页，内容均为原创</p>
+</footer>
 </body>
 </html>

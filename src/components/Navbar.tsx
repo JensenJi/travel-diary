@@ -104,9 +104,10 @@ export default function Navbar() {
           left: 0;
           right: 0;
           z-index: 999;
+          background-color: #f4f6dc;
+          border-bottom: 1px solid #dbe08c;
         }
         .nav-bar {
-          background-color: #dbe08c;
           display: flex;
           padding: 0;
           width: 100%;
@@ -145,7 +146,7 @@ export default function Navbar() {
           top: 25%;
           bottom: 25%;
           width: 1px;
-          background: #ffffff;
+          background: rgba(137, 128, 12, 0.3);
         }
         .nav-links a:hover,
         .nav-links a.active,
@@ -180,7 +181,7 @@ export default function Navbar() {
             display: none;
             flex-direction: column;
             width: 100%;
-            background: #dbe08c;
+            background: transparent;
           }
           .nav-links.open {
             display: flex;
@@ -188,7 +189,7 @@ export default function Navbar() {
           .nav-links a, .nav-links button {
             width: 100%;
             padding: 14px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.5);
+            border-bottom: 1px solid rgba(137, 128, 12, 0.2);
             writing-mode: horizontal-tb;
             white-space: nowrap;
           }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
-import { MapPin, Mail, Phone, Globe, Building2, GraduationCap, MoreHorizontal, ChevronRight, Home as HomeIcon, Lock } from "lucide-react";
+import { MapPin, Mail, Phone, Globe, Building2, GraduationCap, MoreHorizontal, ChevronRight, Home as HomeIcon, Lock, X } from "lucide-react";
 import { WechatIcon, QQIcon } from "@/components/CustomIcons";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -264,6 +264,13 @@ const hobbies = [
 export default function Home() {
   const { user } = useAuth();
   const [showMoreAbout, setShowMoreAbout] = useState(false);
+  const [welcomeVisible, setWelcomeVisible] = useState(
+    () => localStorage.getItem("hideWelcomeBanner") !== "1"
+  );
+  const closeWelcome = () => {
+    localStorage.setItem("hideWelcomeBanner", "1");
+    setWelcomeVisible(false);
+  };
   const [showAllWork, setShowAllWork] = useState(false);
   const [showAllEducation, setShowAllEducation] = useState(false);
   const [stickers, setStickers] = useState<Sticker[]>(generateRandomStickers);
@@ -468,14 +475,23 @@ export default function Home() {
             />
           ))}
 
-          <div className="welcome-banner absolute bottom-4 right-6 text-left z-[1001] bg-[#dbe08c] rounded-lg px-4 py-3 shadow-md">
-            <p className="text-3xl font-bold text-gray-800">
-              欢迎光临我的个人站点
-            </p>
-            <p className="text-base text-gray-700 mt-1">
-              一个做了30多年鞋服爱好编程退休老灯的主页
-            </p>
-          </div>
+          {welcomeVisible && (
+            <div className="welcome-banner absolute bottom-4 right-6 text-left z-[1001] bg-[#dbe08c] rounded-lg px-4 py-3 shadow-md">
+              <button
+                onClick={closeWelcome}
+                aria-label="关闭欢迎语"
+                className="absolute top-1 right-1 text-gray-500 hover:text-gray-800 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <p className="text-3xl font-bold text-gray-800">
+                欢迎光临我的个人站点
+              </p>
+              <p className="text-base text-gray-700 mt-1">
+                一个做了30多年鞋服爱好编程退休老灯的主页
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="bg-white border-l-4 border-r-4 border-[#dbe08c] relative">
@@ -538,7 +554,7 @@ export default function Home() {
 
           <div className="border-t border-gray-200 bg-gray-50 p-4">
             <h2 className="text-base font-bold text-gray-800 mb-2">个人简介</h2>
-            <div className="text-xs text-gray-600 leading-relaxed">
+            <div className="text-xs text-gray-600 leading-relaxed pl-10 md:pl-20">
               <p className="hanging-indent">• 拥有 30 年品牌商品、授权衍生品及促销礼品全球采购从业经验。</p>
               {showMoreAbout && (
                 <>
@@ -548,13 +564,13 @@ export default function Home() {
                   <p className="hanging-indent">• 管理全国多省市、规模超 150 人的鞋服箱包开发团队管理工作。</p>
                 </>
               )}
-              <button
-                onClick={() => setShowMoreAbout(!showMoreAbout)}
-                className="text-center text-[#89800c] text-xs cursor-pointer hover:underline mt-2 w-full"
-              >
-                {showMoreAbout ? "收起 -" : "更多 +"}
-              </button>
             </div>
+            <button
+              onClick={() => setShowMoreAbout(!showMoreAbout)}
+              className="block mx-auto text-[#89800c] text-xs cursor-pointer hover:underline mt-2"
+            >
+              {showMoreAbout ? "收起 -" : "更多 +"}
+            </button>
           </div>
 
           <div className="border-t border-gray-200 p-4">
