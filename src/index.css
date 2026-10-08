@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 悬挂缩进：以"• "开头的条目，换行后与首行文字对齐 */
+.hanging-indent {
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
 :root {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   line-height: 1.5;

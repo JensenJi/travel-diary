@@ -11,10 +11,12 @@
 <style>
 .site-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:#dbe08c;display:flex;justify-content:center;}
 .site-nav-inner{display:flex;max-width:210mm;width:100%;}
-.site-nav a{font-size:16px;color:#89800c;padding:10px 20px;text-decoration:none;font-weight:bold;transition:all 0.2s;position:relative;}
+.site-nav a{font-size:16px;color:#89800c;padding:10px 20px;text-decoration:none;font-weight:bold;transition:all 0.2s;position:relative;display:inline-flex;align-items:center;gap:4px;}
 .site-nav a:hover,.site-nav a.active{color:#fff;background:#d1d678;}
+.site-nav a:first-child{padding-left:0;}
+.site-nav a:last-child{padding-right:0;}
 .site-nav a:not(:last-child)::after{content:"";position:absolute;right:0;top:25%;bottom:25%;width:1px;background:#fff;}
-@media print{.site-nav{display:none;}}
+@media print{.site-nav{display:none;}body{padding-top:0!important;}}
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{height:100%;min-height:100vh;}
   body{
@@ -418,7 +420,7 @@
 <a href="/message">好友留言</a>
 <a href="/aboutme">我的简历</a>
 <a href="/resume-template.html" class="active">简历模板</a>
-<a href="/login">登录/注册</a>
+<a href="/login"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>登录</a>
 </div></nav>
 <script>
 (function(){

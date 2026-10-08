@@ -538,14 +538,14 @@ export default function Home() {
 
           <div className="border-t border-gray-200 bg-gray-50 p-4">
             <h2 className="text-base font-bold text-gray-800 mb-2">个人简介</h2>
-            <p className="text-xs text-gray-600 leading-relaxed">
-              • 拥有 30 年品牌商品、授权衍生品及促销礼品全球采购从业经验。
+            <div className="text-xs text-gray-600 leading-relaxed">
+              <p className="hanging-indent">• 拥有 30 年品牌商品、授权衍生品及促销礼品全球采购从业经验。</p>
               {showMoreAbout && (
                 <>
-                  <br />• 鞋服、饰品、玩具全品类新品开发与货源寻源、开发、生产部署工作。
-                  <br />• 代工、生产统筹与品控全流程生产及品质管理工作。
-                  <br />• 跨区域生产、品质管理、跨职能团队工作统筹管理工作。
-                  <br />• 管理全国多省市、规模超 150 人的鞋服箱包开发团队管理工作。
+                  <p className="hanging-indent">• 鞋服、饰品、玩具全品类新品开发与货源寻源、开发、生产部署工作。</p>
+                  <p className="hanging-indent">• 代工、生产统筹与品控全流程生产及品质管理工作。</p>
+                  <p className="hanging-indent">• 跨区域生产、品质管理、跨职能团队工作统筹管理工作。</p>
+                  <p className="hanging-indent">• 管理全国多省市、规模超 150 人的鞋服箱包开发团队管理工作。</p>
                 </>
               )}
               <button
@@ -554,7 +554,7 @@ export default function Home() {
               >
                 {showMoreAbout ? "收起" : "更多"}
               </button>
-            </p>
+            </div>
           </div>
 
           <div className="border-t border-gray-200 p-4">
@@ -581,7 +581,7 @@ export default function Home() {
                   </div>
                   <div className="mt-2 text-xs text-gray-600">
                     {work.description.map((desc, i) => (
-                      <p key={i}>{desc}</p>
+                      <p key={i} className="hanging-indent">{desc}</p>
                     ))}
                   </div>
                 </div>
@@ -618,7 +618,7 @@ export default function Home() {
                   </div>
                   <div className="mt-2 text-xs text-gray-600">
                     {education.description.map((desc, i) => (
-                      <p key={i}>{desc}</p>
+                      <p key={i} className="hanging-indent">{desc}</p>
                     ))}
                   </div>
                 </div>

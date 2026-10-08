@@ -104,9 +104,17 @@ export default function Navbar() {
           background: none;
           border: none;
           cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
         }
-        .nav-bar a:not(:last-child)::after,
-        .nav-bar button::after {
+        .nav-bar > :first-child {
+          padding-left: 0;
+        }
+        .nav-bar > :last-child {
+          padding-right: 0;
+        }
+        .nav-bar > *:not(:last-child)::after {
           content: "";
           position: absolute;
           right: 0;
