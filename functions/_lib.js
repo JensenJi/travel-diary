@@ -86,28 +86,28 @@ function json(data, status = 200) {
 }
 
 function checkKV(env) {
-  if (!env.SITE_DB) {
-    return json({ error: "后端尚未配置 KV 绑定（SITE_DB），请在 Cloudflare Pages 设置中添加" }, 500);
+  if (!env.USERS) {
+    return json({ error: "后端尚未配置 KV 绑定（USERS），请在 Cloudflare Pages 设置中添加" }, 500);
   }
   return null;
 }
 
 async function getUserByEmail(env, email) {
-  const raw = await env.SITE_DB.get(`user:${email}`);
+  const raw = await env.USERS.get(`user:${email}`);
   return raw ? JSON.parse(raw) : null;
 }
 
 async function saveUser(env, user) {
-  await env.SITE_DB.put(`user:${user.email}`, JSON.stringify(user));
+  await env.USERS.put(`user:${user.email}`, JSON.stringify(user));
 }
 
 async function getAllMessages(env) {
-  const raw = await env.SITE_DB.get("messages");
+  const raw = await env.MESSAGES.get("messages");
   return raw ? JSON.parse(raw) : [];
 }
 
 async function saveAllMessages(env, messages) {
-  await env.SITE_DB.put("messages", JSON.stringify(messages));
+  await env.MESSAGES.put("messages", JSON.stringify(messages));
 }
 
 export {
