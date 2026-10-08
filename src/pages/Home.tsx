@@ -440,7 +440,7 @@ export default function Home() {
 
         <div
           ref={photoWallRef}
-          className="relative bg-[#dbe08c] border border-white border-1"
+          className="photo-wall relative bg-[#dbe08c] border border-white border-1"
           style={{ minHeight: "220px" }}
           onMouseMove={handleMouseMoveDrag}
           onMouseUp={handleMouseUp}
@@ -468,7 +468,7 @@ export default function Home() {
             />
           ))}
 
-          <div className="absolute bottom-4 right-6 text-left z-[1001] bg-[#dbe08c] rounded-lg px-4 py-3 shadow-md">
+          <div className="welcome-banner absolute bottom-4 right-6 text-left z-[1001] bg-[#dbe08c] rounded-lg px-4 py-3 shadow-md">
             <p className="text-3xl font-bold text-gray-800">
               欢迎光临我的个人站点
             </p>
@@ -479,7 +479,7 @@ export default function Home() {
         </div>
 
         <div className="bg-white border-l-4 border-r-4 border-[#dbe08c] relative">
-          <div className="absolute -top-20 left-20 z-20">
+          <div className="profile-avatar absolute -top-20 left-20 z-20">
             <div className="w-40 h-40 rounded-full border-4 border-[#dbe08c] overflow-hidden shadow-xl">
               <img
                 src={avatar}
@@ -489,8 +489,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex min-h-[160px]">
-            <div className="w-1/2 p-4 pl-20">
+          <div className="profile-header flex min-h-[160px]">
+            <div className="w-1/2 p-4 pl-20 profile-left">
               <h1 className="text-xl font-bold text-gray-800 mt-20">Jensen Ji</h1>
               <p className="text-gray-600 text-sm mt-1">经理, 研发部 | JensenJi</p>
               <div className="flex flex-wrap gap-3 text-xs text-gray-500 mt-1">
@@ -550,9 +550,9 @@ export default function Home() {
               )}
               <button
                 onClick={() => setShowMoreAbout(!showMoreAbout)}
-                className="text-[#89800c] hover:underline ml-1"
+                className="text-center text-[#89800c] text-xs cursor-pointer hover:underline mt-2 w-full"
               >
-                {showMoreAbout ? "收起" : "更多"}
+                {showMoreAbout ? "收起 -" : "更多 +"}
               </button>
             </div>
           </div>

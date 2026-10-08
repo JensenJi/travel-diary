@@ -11,11 +11,28 @@
 <style>
 .site-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:#dbe08c;display:flex;justify-content:center;}
 .site-nav-inner{display:flex;max-width:210mm;width:100%;}
+.site-nav-links{display:flex;width:100%;}
 .site-nav a{font-size:16px;color:#89800c;padding:10px 20px;text-decoration:none;font-weight:bold;transition:all 0.2s;position:relative;display:inline-flex;align-items:center;gap:4px;}
 .site-nav a:hover,.site-nav a.active{color:#fff;background:#d1d678;}
-.site-nav a:first-child{padding-left:0;}
-.site-nav a:last-child{padding-right:0;}
-.site-nav a:not(:last-child)::after{content:"";position:absolute;right:0;top:25%;bottom:25%;width:1px;background:#fff;}
+.site-nav-links a:first-child{padding-left:0;}
+.site-nav-links a:last-child{padding-right:0;}
+.site-nav-links a:not(:last-child)::after{content:"";position:absolute;right:0;top:25%;bottom:25%;width:1px;background:#fff;}
+.site-nav-toggle{display:none;background:none;border:none;color:#89800c;font-size:24px;line-height:1;padding:8px 14px;cursor:pointer;}
+.site-nav-mask{display:none;}
+@media(max-width:768px){
+.site-nav-inner{flex-direction:column;}
+.site-nav-toggle{display:block;align-self:flex-start;}
+.site-nav-links{display:none;flex-direction:column;width:100%;}
+body.nav-open .site-nav-links{display:flex;}
+.site-nav a{width:100%;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.5);writing-mode:horizontal-tb;white-space:nowrap;}
+.site-nav-links a:first-child{padding-left:20px;}
+.site-nav-links a:last-child{padding-right:20px;}
+.site-nav-links a:not(:last-child)::after{display:none;}
+body.nav-open .site-nav-mask{display:block;position:fixed;top:44px;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:9998;}
+.action-bar{top:52px;right:8px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 16px);}
+.action-bar button{padding:6px 10px;font-size:12px;}
+.edit-hint{padding:5px 10px;font-size:11px;white-space:normal;text-align:right;}
+}
 @media print{.site-nav{display:none;}body{padding-top:0!important;}}
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{height:100%;min-height:100vh;}
@@ -53,7 +70,7 @@
     box-shadow:0 8px 40px rgba(0,0,0,.1);
     display:flex;
     min-height:100vh;
-    flex:1;
+    flex:0 0 auto;
   }
   @media print{
     body{background:#fff!important;}
@@ -90,7 +107,7 @@
   /* ===== 操作栏 ===== */
   .action-bar{
     position:fixed;
-    top:16px;
+    top:52px;
     right:24px;
     display:flex;
     gap:8px;
@@ -414,6 +431,8 @@
 </head>
 <body style="padding-top:44px;">
 <nav class="site-nav"><div class="site-nav-inner">
+<button class="site-nav-toggle" type="button" aria-label="菜单" onclick="document.body.classList.toggle('nav-open')">&#9776;</button>
+<div class="site-nav-links">
 <a href="/insurance">保险计算</a>
 <a href="/audit.html">工厂审核</a>
 <a href="/works">我的作品</a>
@@ -421,7 +440,9 @@
 <a href="/aboutme">我的简历</a>
 <a href="/resume-template.html" class="active">简历模板</a>
 <a href="/login"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>登录</a>
+</div>
 </div></nav>
+<div class="site-nav-mask" onclick="document.body.classList.remove('nav-open')"></div>
 <script>
 (function(){
   var params=new URLSearchParams(window.location.search);

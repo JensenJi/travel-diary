@@ -8,7 +8,7 @@ export default function Insurance() {
         src="/pension-calculator.html"
         title="保险计算"
         className="w-full border-0"
-        style={{ marginTop: "40px", height: "calc(100vh - 40px)" }}
+        style={{ marginTop: "44px", height: "calc(100vh - 44px)" }}
       />
     </div>
   );
