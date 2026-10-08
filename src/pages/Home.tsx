@@ -554,7 +554,7 @@ export default function Home() {
 
           <div className="border-t border-gray-200 bg-gray-50 p-4">
             <h2 className="text-base font-bold text-gray-800 mb-2">个人简介</h2>
-            <div className="text-xs text-gray-600 leading-relaxed pl-4 md:pl-6">
+            <div className="text-xs text-gray-600 leading-relaxed">
               <p className="hanging-indent">• 拥有 30 年品牌商品、授权衍生品及促销礼品全球采购从业经验。</p>
               {showMoreAbout && (
                 <>

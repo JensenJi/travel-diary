@@ -8,10 +8,8 @@
 .site-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:#f4f6dc;border-bottom:1px solid #dbe08c;display:flex;justify-content:center;}
 .site-nav-inner{display:flex;max-width:210mm;width:100%;}
 .site-nav-links{display:flex;width:100%;}
-.site-nav a{font-size:16px;color:#89800c;padding:10px 20px;text-decoration:none;font-weight:bold;transition:all 0.2s;position:relative;display:inline-flex;align-items:center;gap:4px;}
+.site-nav a{font-size:16px;color:#89800c;flex:1 1 0;padding:10px 8px;text-decoration:none;font-weight:bold;transition:all 0.2s;position:relative;display:flex;align-items:center;justify-content:center;white-space:nowrap;gap:4px;}
 .site-nav a:hover,.site-nav a.active{color:#fff;background:#d1d678;}
-.site-nav-links a:first-child{padding-left:0;}
-.site-nav-links a:last-child{padding-right:0;}
 .site-nav-links a:not(:last-child)::after{content:"";position:absolute;right:0;top:25%;bottom:25%;width:1px;background:rgba(137,128,12,.3);}
 .site-nav-toggle{display:none;background:none;border:none;color:#89800c;font-size:24px;line-height:1;padding:8px 14px;cursor:pointer;}
 .site-nav-mask{display:none;}
@@ -25,9 +23,7 @@ table{min-width:720px;}
 .site-nav-toggle{display:block;align-self:flex-start;}
 .site-nav-links{display:none;flex-direction:column;width:100%;}
 body.nav-open .site-nav-links{display:flex;}
-.site-nav a{width:100%;padding:14px 20px;border-bottom:1px solid rgba(137,128,12,.2);writing-mode:horizontal-tb;white-space:nowrap;}
-.site-nav-links a:first-child{padding-left:20px;}
-.site-nav-links a:last-child{padding-right:20px;}
+.site-nav a{flex:none;width:100%;justify-content:flex-start;padding:14px 20px;border-bottom:1px solid rgba(137,128,12,.2);writing-mode:horizontal-tb;white-space:nowrap;}
 .site-nav-links a:not(:last-child)::after{display:none;}
 body.nav-open .site-nav-mask{display:block;position:fixed;top:44px;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:9998;}
 }
@@ -194,7 +190,7 @@ input[type="date"]{
 <a href="/message">好友留言</a>
 <a href="/aboutme">我的简历</a>
 <a href="/resume-template.html">简历模板</a>
-<a href="/login"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>登录</a>
+<a href="/login">注册登录</a>
 </div>
 </div></nav>
 <div class="site-nav-mask" onclick="document.body.classList.remove('nav-open')"></div>

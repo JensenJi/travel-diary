@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth, ADMIN_EMAIL } from "@/context/AuthContext";
-import { LogIn, LogOut, Settings, Menu, X } from "lucide-react";
+import { LogOut, Settings, Menu, X } from "lucide-react";
 
 const navItems = [
   { name: "保险计算", path: "/insurance" },
@@ -85,8 +85,7 @@ export default function Navbar() {
               className={location.pathname === "/login" ? "active" : ""}
               onClick={closeMenu}
             >
-              <LogIn className="w-4 h-4 inline" />
-              登录
+              注册登录
             </Link>
           )}
         </div>
@@ -109,35 +108,33 @@ export default function Navbar() {
         }
         .nav-bar {
           display: flex;
-          padding: 0 16px;
+          padding: 0;
           width: 100%;
           max-width: 210mm;
           position: relative;
         }
         .nav-links {
           display: flex;
+          align-items: stretch;
           width: 100%;
         }
         .nav-links a, .nav-links button {
+          flex: 1 1 0;
           font-size: 16px;
           color: #89800c;
-          padding: 10px 20px;
-          transition: all 0.2s ease;
+          padding: 10px 8px;
+          transition: background-color 0.2s ease, color 0.2s ease;
           position: relative;
           text-decoration: none;
           font-weight: bold;
-          background: none;
+          background: transparent;
           border: none;
           cursor: pointer;
           display: flex;
           align-items: center;
+          justify-content: center;
+          white-space: nowrap;
           gap: 4px;
-        }
-        .nav-links > :first-child {
-          padding-left: 0;
-        }
-        .nav-links > :last-child {
-          padding-right: 0;
         }
         .nav-links > *:not(:last-child)::after {
           content: "";
@@ -188,17 +185,13 @@ export default function Navbar() {
             display: flex;
           }
           .nav-links a, .nav-links button {
+            flex: none;
             width: 100%;
+            justify-content: flex-start;
             padding: 14px 20px;
             border-bottom: 1px solid rgba(137, 128, 12, 0.2);
             writing-mode: horizontal-tb;
             white-space: nowrap;
-          }
-          .nav-links > :first-child {
-            padding-left: 20px;
-          }
-          .nav-links > :last-child {
-            padding-right: 20px;
           }
           .nav-links > *:not(:last-child)::after {
             display: none;
