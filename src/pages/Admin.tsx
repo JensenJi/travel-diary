@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth, ADMIN_EMAIL } from "@/context/AuthContext";
 import { Users, Mail, Calendar, Shield, LogOut, BarChart3, MessageCircle, Trash2, Monitor, Smartphone, Globe, X, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -47,7 +47,7 @@ export default function Admin() {
       return;
     }
 
-    if (user.role !== "admin" && user.email !== import.meta.env.VITE_ADMIN_EMAIL) {
+    if (user.role !== "admin" && user.email !== ADMIN_EMAIL) {
       navigate("/");
       return;
     }
@@ -152,25 +152,7 @@ export default function Admin() {
     navigate("/");
   };
 
-  if (!user || loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#89800c] mx-auto mb-4"></div>
-          <p className="text-gray-600">加载中...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const friendUsers = users.filter(u => u.role !== "admin");
-
-  // 用户分页：每页10条
-  const usersPerPage = 10;
-  const totalUserPages = Math.ceil(friendUsers.length / usersPerPage);
-  const pagedUsers = friendUsers.slice((userPage - 1) * usersPerPage, userPage * usersPerPage);
-
-  // 饼图渲染
+  // 饼图渲染（必须放在提前 return 之前，否则违反 React Hooks 规则导致页面崩溃白屏）
   useEffect(() => {
     if (activeTab !== "stats" || !stats) return;
 
@@ -220,6 +202,24 @@ export default function Admin() {
       chartInstances.current = [];
     };
   }, [activeTab, stats]);
+
+  if (!user || loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#89800c] mx-auto mb-4"></div>
+          <p className="text-gray-600">加载中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const friendUsers = users.filter(u => u.role !== "admin");
+
+  // 用户分页：每页10条
+  const usersPerPage = 10;
+  const totalUserPages = Math.ceil(friendUsers.length / usersPerPage);
+  const pagedUsers = friendUsers.slice((userPage - 1) * usersPerPage, userPage * usersPerPage);
 
   return (
     <div className="min-h-screen bg-gray-50">
