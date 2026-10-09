@@ -25,13 +25,13 @@
       }
     </script>
     <script>
+      // Unregister any existing service workers to prevent blank page caching issues
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js').then(function(reg) {
-            // Force update on new deployment
-            reg.update();
-          }).catch(function(err) {
-            console.log('SW registration failed:', err);
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for (var reg of registrations) {
+              reg.unregister();
+            }
           });
         });
       }

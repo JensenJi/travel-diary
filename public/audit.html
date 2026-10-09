@@ -48,21 +48,21 @@ td,th{
   line-height:1.5;
 }
 th{
-  background:#cce0f5;
-  color:#1a4a7a;
+  background:#dbe08c;
+  color:#89800c;
   font-weight:700;
   text-align:center;
 }
 .section-title{
-  background:#daeaf8;
-  color:#1a4a7a;
+  background:#f4f6dc;
+  color:#89800c;
   font-weight:700;
   font-size:11px;
   padding:3px 6px;
   letter-spacing:0.5px;
 }
 .label-cell{
-  background:#f4f7fb;
+  background:#f4f6dc;
   color:#555;
   font-size:10px;
   text-align:left;
@@ -83,7 +83,7 @@ input,select{
   min-width:0;
 }
 input[type="checkbox"],input[type="radio"]{width:auto;margin:0 1px;}
-input:focus{background:#fffbe6;}
+input:focus{background:#fffde6;}
 select{background:transparent;cursor:pointer;}
 input:not([type="checkbox"]):not([type="radio"]):not([type="date"]){
   text-align:center;
@@ -131,8 +131,8 @@ input[type="date"]{
   margin:0 6px;
   border:1px solid;
 }
-.btn-primary{background:#4a90d9;color:#fff;border-color:#4a90d9;}
-.btn-outline{background:#fff;color:#4a90d9;border-color:#a0c8e8;}
+.btn-primary{background:#89800c;color:#fff;border-color:#89800c;}
+.btn-outline{background:#fff;color:#89800c;border-color:#d1d678;}
 
 /* 设备单格 */
 .eq-cell{
@@ -151,7 +151,7 @@ input[type="date"]{
 .eq-item input{width:35px;min-width:35px;}
 .eq-title{
   display:block;
-  color:#1a4a7a;
+  color:#89800c;
   font-weight:600;
   margin-bottom:2px;
 }
@@ -170,7 +170,7 @@ input[type="date"]{
   min-height:20px;
 }
 .client-table input:focus,.client-table select:focus{
-  background:#fffbe6;
+  background:#fffde6;
   border-radius:2px;
 }
 .client-table input[type="date"]{
@@ -198,7 +198,7 @@ input[type="date"]{
 <table>
 <!-- 标题 -->
 <tr><td colspan="10" style="text-align:center;padding:6px 0;border:1px solid #333;">
-  <span style="font-size:14px;font-weight:700;color:#1a4a7a;letter-spacing:2px;">工厂审核申请表</span>
+  <span style="font-size:14px;font-weight:700;color:#89800c;letter-spacing:2px;">工厂审核申请表</span>
 </td></tr>
 
 <!-- ===== 基本信息 ===== -->
@@ -434,7 +434,7 @@ input[type="date"]{
           <th>评估结果</th>
           <th>审核员</th>
           <th>备注</th>
-          <th><button onclick="addRow()" style="font-size:10px;padding:1px 5px;color:#4a90d9;border:1px solid #4a90d9;background:#eef5ff;border-radius:3px;cursor:pointer;">+</button></th>
+          <th><button onclick="addRow()" style="font-size:10px;padding:1px 5px;color:#89800c;border:1px solid #89800c;background:#f4f6dc;border-radius:3px;cursor:pointer;">+</button></th>
         </tr>
       </thead>
       <tbody id="clientBody">
@@ -627,9 +627,9 @@ function printPreview(){
 body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:11px;color:#333;background:#fff;padding:10px;}
 table{width:100%;border-collapse:collapse;table-layout:fixed;}
 td,th{border:1px solid #333;padding:4px 5px;vertical-align:middle;font-size:11px;line-height:1.5;}
-th{background:#cce0f5;color:#1a4a7a;font-weight:700;text-align:center;}
-.section-title{background:#daeaf8;color:#1a4a7a;font-weight:700;font-size:11px;padding:3px 6px;letter-spacing:0.5px;}
-.label-cell{background:#f4f7fb;color:#555;font-size:10px;text-align:right;white-space:nowrap;}
+th{background:#dbe08c;color:#89800c;font-weight:700;text-align:center;}
+.section-title{background:#f4f6dc;color:#89800c;font-weight:700;font-size:11px;padding:3px 6px;letter-spacing:0.5px;}
+.label-cell{background:#f4f6dc;color:#555;font-size:10px;text-align:right;white-space:nowrap;}
 .label-cell.auto{white-space:normal;}
 .eq-cell{padding:3px 4px !important;font-size:10px;line-height:1.6;}
 .client-table td{padding:4px 5px;vertical-align:middle;border:1px solid #333;}
@@ -651,7 +651,7 @@ th{background:#cce0f5;color:#1a4a7a;font-weight:700;text-align:center;}
   body{width:100%!important;background:#fff!important;padding:0;margin:0;}
   .btn{display:none!important;}
   td,th{padding:3px 4px;font-size:10px;}
-  .section-title,.section-title+tr th{background:#cce0f5!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .section-title,.section-title+tr th{background:#dbe08c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   .eq-item input{width:30px;min-width:30px;}
 }
 </style>
