@@ -23,8 +23,8 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "邮箱格式不正确" }, 400);
   }
 
-  // 角色默认为friend，管理员邮箱自动为admin
-  let userRole = (role === "admin" || role === "friend") ? role : "friend";
+  // 角色规则：只有指定管理员邮箱才为admin，其余全部为friend
+  let userRole = "friend";
   if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
     userRole = "admin";
   }

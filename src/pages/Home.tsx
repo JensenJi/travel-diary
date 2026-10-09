@@ -557,7 +557,7 @@ export default function Home() {
           </div>
 
           <div className="bg-gray-50 px-4 py-3">
-            <div className="text-xs text-gray-600 leading-relaxed space-y-1" style={{ paddingLeft: '4em' }}>
+            <div className="text-xs text-gray-600 leading-relaxed space-y-1" style={{ paddingLeft: '5em' }}>
               <p>• 拥有 30 年品牌商品、授权衍生品及促销礼品全球采购从业经验。</p>
               <p>• 鞋服、饰品、玩具全品类新品开发与货源寻源、开发、生产部署工作。</p>
               <p>• 代工、生产统筹与品控全流程生产及品质管理工作。</p>

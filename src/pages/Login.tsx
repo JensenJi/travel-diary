@@ -62,8 +62,8 @@ export default function Login() {
 
     try {
       if (mode === "login") {
-        await login(formData.email, formData.password, role);
-        navigate(role === "admin" ? "/admin" : "/");
+        const user = await login(formData.email, formData.password, role);
+        navigate(user?.role === "admin" ? "/admin" : "/");
       } else {
         if (formData.password !== formData.confirmPassword) {
           setError("两次密码输入不一致！");
@@ -73,8 +73,8 @@ export default function Login() {
           setError("密码至少需要6位！");
           return;
         }
-        await register(formData.email, formData.password, formData.username, role);
-        navigate(role === "admin" ? "/admin" : "/");
+        const user = await register(formData.email, formData.password, formData.username, role);
+        navigate(user?.role === "admin" ? "/admin" : "/");
       }
     } catch (err: any) {
       setError(err.message || "操作失败，请重试");
@@ -89,7 +89,7 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-[#dbe08c]/20 to-[#89800c]/20">
       <Navbar />
       <div className="pt-16">
-        <div className="max-w-[210mm] mx-auto mt-4 sm:mt-8 mb-4 sm:mb-8 px-4">
+        <div className="max-w-md mx-auto mt-4 sm:mt-8 mb-4 sm:mb-8 px-3 sm:px-4">
           <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
             {/* 角色切换 Tab */}
             <div className="flex border-b border-gray-200">
@@ -125,9 +125,9 @@ export default function Login() {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 px-4 py-3 mx-8 mt-4 rounded-lg flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-red-500" />
-                <span className="text-red-600">{error}</span>
+              <div className="bg-red-50 border border-red-200 px-4 py-3 mx-3 sm:mx-8 mt-4 rounded-lg flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                <span className="text-red-600 text-sm">{error}</span>
               </div>
             )}
 
@@ -220,34 +220,34 @@ export default function Login() {
 
             {/* 访问统计 */}
             {stats && (
-              <div className="border-t border-gray-100 bg-gray-50 px-8 py-4">
+              <div className="border-t border-gray-100 bg-gray-50 px-3 sm:px-8 py-4">
                 <div className="flex items-center gap-2 mb-3">
                   <BarChart3 className="w-4 h-4 text-[#89800c]" />
                   <span className="text-sm font-medium text-gray-700">访问统计</span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="bg-white rounded-lg p-3 text-center border border-gray-100">
-                    <div className="text-xl font-bold text-[#89800c]">{stats.totalVisits.toLocaleString()}</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                  <div className="bg-white rounded-lg p-2 sm:p-3 text-center border border-gray-100">
+                    <div className="text-lg sm:text-xl font-bold text-[#89800c]">{stats.totalVisits.toLocaleString()}</div>
                     <div className="text-xs text-gray-500 mt-1">总访问量</div>
                   </div>
-                  <div className="bg-white rounded-lg p-3 text-center border border-gray-100">
-                    <div className="text-xl font-bold text-[#89800c]">{stats.uniqueVisitors.toLocaleString()}</div>
+                  <div className="bg-white rounded-lg p-2 sm:p-3 text-center border border-gray-100">
+                    <div className="text-lg sm:text-xl font-bold text-[#89800c]">{stats.uniqueVisitors.toLocaleString()}</div>
                     <div className="text-xs text-gray-500 mt-1">访客数</div>
                   </div>
-                  <div className="bg-white rounded-lg p-3 text-center border border-gray-100">
+                  <div className="bg-white rounded-lg p-2 sm:p-3 text-center border border-gray-100">
                     <div className="flex items-center justify-center gap-1">
                       <Monitor className="w-4 h-4 text-gray-400" />
-                      <span className="text-lg font-bold text-gray-700">
-                        {stats.deviceStats?.Desktop || 0}
+                      <span className="text-base sm:text-lg font-bold text-gray-700">
+                        {stats.deviceStats?.Desktop || stats.deviceStats?.电脑 || 0}
                       </span>
                     </div>
                     <div className="text-xs text-gray-500 mt-1">电脑端</div>
                   </div>
-                  <div className="bg-white rounded-lg p-3 text-center border border-gray-100">
+                  <div className="bg-white rounded-lg p-2 sm:p-3 text-center border border-gray-100">
                     <div className="flex items-center justify-center gap-1">
                       <Smartphone className="w-4 h-4 text-gray-400" />
-                      <span className="text-lg font-bold text-gray-700">
-                        {(stats.deviceStats?.Mobile || 0) + (stats.deviceStats?.Tablet || 0)}
+                      <span className="text-base sm:text-lg font-bold text-gray-700">
+                        {(stats.deviceStats?.Mobile || 0) + (stats.deviceStats?.手机 || 0) + (stats.deviceStats?.Tablet || 0) + (stats.deviceStats?.平板 || 0)}
                       </span>
                     </div>
                     <div className="text-xs text-gray-500 mt-1">移动端</div>

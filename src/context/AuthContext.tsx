@@ -13,8 +13,8 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string, role?: string) => Promise<void>;
-  register: (email: string, password: string, username: string, role?: string) => Promise<void>;
+  login: (email: string, password: string, role?: string) => Promise<User>;
+  register: (email: string, password: string, username: string, role?: string) => Promise<User>;
   logout: () => Promise<void>;
   changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
@@ -84,6 +84,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (!res.ok) throw new Error(data.error || "登录失败");
     localStorage.setItem("token", data.token);
     setUser(data.user);
+    return data.user;
   };
 
   const register = async (email: string, password: string, username: string, role?: string) => {
@@ -98,6 +99,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (!res.ok) throw new Error(data.error || "注册失败");
       localStorage.setItem("token", data.token);
       setUser(data.user);
+      return data.user;
     } catch (e) {
       if (e instanceof SyntaxError) {
         console.error("register JSON parse error, response text:", text);
