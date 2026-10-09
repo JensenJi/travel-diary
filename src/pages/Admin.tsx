@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import { useAuth, ADMIN_EMAIL } from "@/context/AuthContext";
-import { Users, Mail, Calendar, Shield, LogOut, BarChart3, MessageCircle, Trash2, Monitor, Smartphone, Globe, X, ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { Users, Mail, Calendar, Shield, LogOut, BarChart3, MessageCircle, Trash2, Monitor, Smartphone, Globe, X, ChevronLeft, ChevronRight, Eye, ClipboardList } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMessages, deleteMessage, Message } from "@/services/messageService";
@@ -24,14 +24,27 @@ interface VisitStats {
   dailyVisits: Record<string, number>;
 }
 
+interface AuditData {
+  id: string;
+  factoryName: string;
+  factoryAddr: string;
+  ownerName: string;
+  contactPhone: string;
+  factoryType: string;
+  email: string;
+  username: string;
+  createdAt: string;
+}
+
 export default function Admin() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [users, setUsers] = useState<UserData[]>([]);
+  const [audits, setAudits] = useState<AuditData[]>([]);
   const [stats, setStats] = useState<VisitStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"messages" | "users" | "stats">("messages");
+  const [activeTab, setActiveTab] = useState<"messages" | "users" | "audits" | "stats">("messages");
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
   const [userPage, setUserPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
@@ -60,6 +73,7 @@ export default function Admin() {
       await Promise.all([
         loadMessages(),
         loadUsers(),
+        loadAudits(),
         loadStats(),
       ]);
     } finally {
@@ -87,6 +101,36 @@ export default function Admin() {
     } catch (error) {
       console.error("加载用户失败:", error);
     }
+  };
+
+  const loadAudits = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/audits", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.audits) setAudits(data.audits);
+    } catch (error) {
+      console.error("加载审核存档失败:", error);
+    }
+  };
+
+  const handleViewAudit = (audit: AuditData) => {
+    const token = localStorage.getItem("token");
+    const w = window.open("", "_blank");
+    if (!w) { alert("弹窗被拦截，请允许弹窗后重试"); return; }
+    w.document.write('<html><head><title>审核存档 - ' + audit.factoryName + '</title></head><body style="text-align:center;padding:40px;"><p style="font-size:18px;">加载中...</p></body></html>');
+    w.document.close();
+    fetch(`/api/audits/${audit.id}`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(r => {
+        if (r.error) { w.document.body.innerHTML = '<p style="color:red;font-size:16px;">' + r.error + '</p>'; return; }
+        w.document.open();
+        w.document.write('<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>审核存档 - ' + audit.factoryName + '</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Microsoft YaHei",sans-serif;font-size:11px;color:#333;background:#fff;padding:20px;}</style></head><body>' + (r.audit?.content || '<p style="color:#888;">无内容</p>') + '</body></html>');
+        w.document.close();
+      })
+      .catch(() => { w.document.body.innerHTML = '<p style="color:red;">加载失败</p>'; });
   };
 
   const loadStats = async () => {
@@ -131,6 +175,20 @@ export default function Admin() {
     if (!deleteConfirm) return;
     try {
       const token = localStorage.getItem("token");
+      if (deleteConfirm.type === "audit") {
+        const res = await fetch(`/api/audits/${deleteConfirm.id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          setAudits(prev => prev.filter(a => a.id !== deleteConfirm.id));
+          setDeleteConfirm(null);
+        } else {
+          const data = await res.json();
+          alert(data.error || "删除失败");
+        }
+        return;
+      }
       const res = await fetch(`/api/admin/users?id=${deleteConfirm.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
@@ -241,7 +299,7 @@ export default function Admin() {
           </div>
 
           {/* 统计卡片 */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -289,6 +347,18 @@ export default function Admin() {
                 </div>
               </div>
             </div>
+
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                  <ClipboardList className="w-6 h-6 text-indigo-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">审核存档数</p>
+                  <p className="text-2xl font-bold text-gray-800">{audits.length}</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Tab 切换 */}
@@ -314,6 +384,17 @@ export default function Admin() {
             >
               <Users className="w-4 h-4 inline mr-1" />
               用户管理
+            </button>
+            <button
+              onClick={() => setActiveTab("audits")}
+              className={`px-4 py-2 text-sm font-medium transition-colors rounded-t-lg ${
+                activeTab === "audits"
+                  ? "bg-[#dbe08c] text-[#89800c]"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              <ClipboardList className="w-4 h-4 inline mr-1" />
+              审核存档
             </button>
             <button
               onClick={() => setActiveTab("stats")}
@@ -480,6 +561,71 @@ export default function Admin() {
             </div>
           )}
 
+          {/* 审核存档 */}
+          {activeTab === "audits" && (
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="bg-[#dbe08c] px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <ClipboardList className="w-5 h-5 text-[#89800c]" />
+                  <h2 className="font-bold text-[#89800c]">审核存档列表</h2>
+                  <span className="text-sm text-[#89800c] ml-2">（共 {audits.length} 份）</span>
+                </div>
+              </div>
+              <div className="overflow-x-auto" style={{ maxHeight: "500px", overflowY: "auto" }}>
+                {audits.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">暂无审核存档</div>
+                ) : (
+                  <table className="w-full">
+                    <thead className="sticky top-0 bg-white z-10">
+                      <tr className="border-b border-gray-200">
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">工厂名称</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">工厂类型</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">拥有人</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">提交人</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">提交时间</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {audits.map((a) => (
+                        <tr key={a.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="px-6 py-4 font-medium text-gray-800">{a.factoryName}</td>
+                          <td className="px-6 py-4 text-gray-600 text-sm">{a.factoryType || "-"}</td>
+                          <td className="px-6 py-4 text-gray-600 text-sm">{a.ownerName}</td>
+                          <td className="px-6 py-4">
+                            <div className="flex flex-col">
+                              <span className="text-sm text-gray-800">{a.username || "未知"}</span>
+                              <span className="text-xs text-gray-400">{a.email}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-gray-500 text-sm">{formatDate(a.createdAt)}</td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleViewAudit(a)}
+                                className="text-blue-500 hover:text-blue-700 transition-colors p-1"
+                                title="查看审核表"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => setDeleteConfirm({ type: "audit", id: a.id, name: a.factoryName })}
+                                className="text-red-500 hover:text-red-700 transition-colors p-1"
+                                title="删除"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* 用户详情弹窗 */}
           {selectedUser && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setSelectedUser(null)}>
@@ -594,7 +740,9 @@ export default function Admin() {
               </button>
             </div>
             <p className="text-gray-600 mb-6">
-              确定要删除用户「{deleteConfirm.name}」吗？该用户的所有数据将被移除。
+              {deleteConfirm.type === "audit"
+                ? `确定要删除「${deleteConfirm.name}」的审核存档吗？`
+                : `确定要删除用户「${deleteConfirm.name}」吗？该用户的所有数据将被移除。`}
             </p>
             <div className="flex gap-3">
               <button

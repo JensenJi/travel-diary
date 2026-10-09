@@ -572,12 +572,56 @@ function getAuditData(){
   };
 }
 
+// 获取审核表完整数据（含HTML内容）
+function getFullAuditData(){
+  var table = document.querySelector('body > table');
+  var companyInput = document.querySelector('tr:nth-child(3) td:nth-child(2) input');
+  var addrInput = document.querySelector('tr:nth-child(4) td:nth-child(2) input');
+  var ownerInput = document.querySelector('tr:nth-child(6) td:nth-child(2) input');
+  var phoneInput = document.querySelector('tr:nth-child(7) td:nth-child(4) input');
+  var typeRadio = document.querySelector('input[name="fType"]:checked');
+  return {
+    factoryName: companyInput ? companyInput.value : '',
+    factoryAddr: addrInput ? addrInput.value : '',
+    ownerName: ownerInput ? ownerInput.value : '',
+    contactPhone: phoneInput ? phoneInput.value : '',
+    factoryType: typeRadio ? typeRadio.parentElement.textContent.trim() : '',
+    content: table ? table.outerHTML : ''
+  };
+}
+
 function validateAndSave(){
   var basicErr = validateBasicInfo();
   if(basicErr){ alert('基本信息不完整：' + basicErr); return; }
   var clientErr = validateClientInfo();
   if(clientErr){ alert('客户审核信息不完整：' + clientErr); return; }
-  alert('保存成功！');
+
+  var token = localStorage.getItem('token');
+  if(!token){ alert('请先登录后再保存审核表'); window.location.href='/login'; return; }
+
+  var data = getFullAuditData();
+  var btn = event && event.target ? event.target : null;
+  if(btn){ btn.disabled = true; btn.textContent = '保存中...'; }
+
+  fetch('/api/audits', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(data)
+  })
+  .then(function(res){
+    if(res.status === 401){ throw new Error('登录已过期，请重新登录'); }
+    return res.json();
+  })
+  .then(function(r){
+    if(r.error){ throw new Error(r.error); }
+    alert('保存成功！可在管理页面查看。');
+  })
+  .catch(function(e){
+    alert('保存失败：' + (e.message || '网络错误'));
+  })
+  .finally(function(){
+    if(btn){ btn.disabled = false; btn.textContent = '保存'; }
+  });
 }
 
 // 打印预览：在新窗口中打开静态内容
