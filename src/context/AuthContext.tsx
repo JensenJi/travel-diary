@@ -44,6 +44,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setLoading(false);
       return;
     }
+    // 超时保护：5秒后强制结束loading
+    const timeout = setTimeout(() => setLoading(false), 5000);
     (async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/auth/me`, {
@@ -63,6 +65,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } catch {
         localStorage.removeItem("token");
       } finally {
+        clearTimeout(timeout);
         setLoading(false);
       }
     })();
@@ -150,7 +153,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         forgotPassword,
       }}
     >
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
