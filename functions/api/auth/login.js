@@ -1,4 +1,4 @@
-import { checkKV, json, hashPassword, createToken, getUserByEmail } from "../../_lib.js";
+import { checkKV, json, hashPassword, createToken, getUserByEmail, ADMIN_EMAIL } from "../../_lib.js";
 
 export async function onRequestPost({ request, env }) {
   const kvError = checkKV(env);
@@ -27,13 +27,16 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "邮箱或密码不正确" }, 401);
   }
 
+  // 管理员邮箱自动提升为 admin 角色
+  const userRole = user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? "admin" : (user.role || "friend");
+
   const token = await createToken(
-    { userId: user.id, email: user.email, username: user.username, iat: Date.now() },
+    { userId: user.id, email: user.email, username: user.username, role: userRole, iat: Date.now() },
     env
   );
 
   return json({
     token,
-    user: { id: user.id, email: user.email, username: user.username },
+    user: { id: user.id, email: user.email, username: user.username, role: userRole },
   });
 }

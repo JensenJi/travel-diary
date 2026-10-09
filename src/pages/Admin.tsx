@@ -1,15 +1,36 @@
 import Navbar from "@/components/Navbar";
 import { useAuth } from "@/context/AuthContext";
-import { Users, Mail, Calendar, Shield, LogOut, BarChart3, MessageCircle } from "lucide-react";
+import { Users, Mail, Calendar, Shield, LogOut, BarChart3, MessageCircle, Trash2, Monitor, Smartphone, Globe, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMessages, Message } from "@/services/messageService";
+import { getMessages, deleteMessage, Message } from "@/services/messageService";
+
+interface UserData {
+  id: string;
+  email: string;
+  username: string;
+  role: string;
+  createdAt: string;
+}
+
+interface VisitStats {
+  totalVisits: number;
+  uniqueVisitors: number;
+  osStats: Record<string, number>;
+  deviceStats: Record<string, number>;
+  sourceStats: Record<string, number>;
+  dailyVisits: Record<string, number>;
+}
 
 export default function Admin() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [stats, setStats] = useState<VisitStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"messages" | "users" | "stats">("messages");
+  const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -17,13 +38,25 @@ export default function Admin() {
       return;
     }
 
-    if (user.email !== import.meta.env.VITE_ADMIN_EMAIL) {
+    if (user.role !== "admin" && user.email !== import.meta.env.VITE_ADMIN_EMAIL) {
       navigate("/");
       return;
     }
 
-    loadMessages();
+    loadAll();
   }, [user, navigate]);
+
+  const loadAll = async () => {
+    try {
+      await Promise.all([
+        loadMessages(),
+        loadUsers(),
+        loadStats(),
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadMessages = async () => {
     try {
@@ -31,8 +64,32 @@ export default function Admin() {
       setMessages(data);
     } catch (error) {
       console.error("加载留言失败:", error);
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const loadUsers = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/admin/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.users) setUsers(data.users);
+    } catch (error) {
+      console.error("加载用户失败:", error);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/stats/visit", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.stats) setStats(data.stats);
+    } catch (error) {
+      console.error("加载统计失败:", error);
     }
   };
 
@@ -45,6 +102,40 @@ export default function Admin() {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (!confirm("确定要删除这条留言吗？")) return;
+    try {
+      await deleteMessage(id);
+      setMessages(prev => prev.filter(m => m.id !== id));
+    } catch (error: any) {
+      alert(error.message || "删除失败");
+    }
+  };
+
+  const handleDeleteUser = async (id: string, name: string) => {
+    setDeleteConfirm({ type: "user", id, name });
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!deleteConfirm) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/admin/users?id=${deleteConfirm.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setUsers(prev => prev.filter(u => u.id !== deleteConfirm.id));
+        setDeleteConfirm(null);
+      } else {
+        const data = await res.json();
+        alert(data.error || "删除失败");
+      }
+    } catch (error: any) {
+      alert(error.message || "删除失败");
+    }
   };
 
   const handleLogout = async () => {
@@ -63,25 +154,28 @@ export default function Admin() {
     );
   }
 
+  const friendUsers = users.filter(u => u.role !== "admin");
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="pt-16">
-        <div className="max-w-[210mm] mx-auto px-8 py-8">
-          <div className="flex items-center justify-between mb-8">
+        <div className="max-w-[210mm] mx-auto px-4 sm:px-8 py-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">后台管理</h1>
               <p className="text-gray-600 mt-2">查看网站用户统计和管理</p>
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors self-start sm:self-auto"
             >
               <LogOut className="w-5 h-5" />
               退出登录
             </button>
           </div>
 
+          {/* 统计卡片 */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex items-center gap-4">
@@ -101,10 +195,8 @@ export default function Admin() {
                   <Users className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">留言用户数</p>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {new Set(messages.map(m => m.userId)).size}
-                  </p>
+                  <p className="text-sm text-gray-500">好友用户数</p>
+                  <p className="text-2xl font-bold text-gray-800">{friendUsers.length}</p>
                 </div>
               </div>
             </div>
@@ -112,17 +204,11 @@ export default function Admin() {
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-purple-600" />
+                  <BarChart3 className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">本月留言</p>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {messages.filter(m => {
-                      const now = new Date();
-                      const msgDate = new Date(m.createdAt);
-                      return msgDate.getMonth() === now.getMonth() && msgDate.getFullYear() === now.getFullYear();
-                    }).length}
-                  </p>
+                  <p className="text-sm text-gray-500">总访问量</p>
+                  <p className="text-2xl font-bold text-gray-800">{stats?.totalVisits || 0}</p>
                 </div>
               </div>
             </div>
@@ -134,59 +220,300 @@ export default function Admin() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">管理员</p>
-                  <p className="text-2xl font-bold text-gray-800">1</p>
+                  <p className="text-2xl font-bold text-gray-800">{users.filter(u => u.role === "admin").length || 1}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="bg-[#dbe08c] px-6 py-4">
-              <div className="flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-[#89800c]" />
-                <h2 className="font-bold text-[#89800c]">留言列表</h2>
+          {/* Tab 切换 */}
+          <div className="flex border-b border-gray-200 mb-6 gap-1">
+            <button
+              onClick={() => setActiveTab("messages")}
+              className={`px-4 py-2 text-sm font-medium transition-colors rounded-t-lg ${
+                activeTab === "messages"
+                  ? "bg-[#dbe08c] text-[#89800c]"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              <MessageCircle className="w-4 h-4 inline mr-1" />
+              留言管理
+            </button>
+            <button
+              onClick={() => setActiveTab("users")}
+              className={`px-4 py-2 text-sm font-medium transition-colors rounded-t-lg ${
+                activeTab === "users"
+                  ? "bg-[#dbe08c] text-[#89800c]"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              <Users className="w-4 h-4 inline mr-1" />
+              用户管理
+            </button>
+            <button
+              onClick={() => setActiveTab("stats")}
+              className={`px-4 py-2 text-sm font-medium transition-colors rounded-t-lg ${
+                activeTab === "stats"
+                  ? "bg-[#dbe08c] text-[#89800c]"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 inline mr-1" />
+              访问统计
+            </button>
+          </div>
+
+          {/* 留言管理 */}
+          {activeTab === "messages" && (
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="bg-[#dbe08c] px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5 text-[#89800c]" />
+                  <h2 className="font-bold text-[#89800c]">留言列表</h2>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                {messages.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">暂无留言</div>
+                ) : (
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">用户名</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">邮箱</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">留言内容</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">时间</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {messages.map((msg) => (
+                        <tr key={msg.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-[#dbe08c] rounded-full flex items-center justify-center">
+                                <span className="text-sm font-medium text-[#89800c]">
+                                  {msg.userName.charAt(0)}
+                                </span>
+                              </div>
+                              <span className="font-medium text-gray-800">{msg.userName}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-gray-600 text-sm">{msg.userEmail}</td>
+                          <td className="px-6 py-4 text-gray-600 max-w-xs truncate">{msg.content}</td>
+                          <td className="px-6 py-4 text-gray-500 text-sm">{formatDate(msg.createdAt)}</td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() => handleDeleteMessage(msg.id)}
+                              className="text-red-500 hover:text-red-700 transition-colors p-1"
+                              title="删除留言"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
-            <div className="overflow-x-auto">
-              {messages.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  暂无留言
+          )}
+
+          {/* 用户管理 */}
+          {activeTab === "users" && (
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="bg-[#dbe08c] px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-[#89800c]" />
+                  <h2 className="font-bold text-[#89800c]">好友用户列表</h2>
                 </div>
-              ) : (
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">用户名</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">邮箱</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">留言内容</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">时间</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {messages.map((msg) => (
-                      <tr key={msg.id} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-[#dbe08c] rounded-full flex items-center justify-center">
-                              <span className="text-sm font-medium text-[#89800c]">
-                                {msg.userName.charAt(0)}
-                              </span>
-                            </div>
-                            <span className="font-medium text-gray-800">{msg.userName}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-gray-600">{msg.userEmail}</td>
-                        <td className="px-6 py-4 text-gray-600 max-w-xs truncate">{msg.content}</td>
-                        <td className="px-6 py-4 text-gray-600">{formatDate(msg.createdAt)}</td>
+              </div>
+              <div className="overflow-x-auto">
+                {friendUsers.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">暂无好友用户</div>
+                ) : (
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">用户名</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">邮箱</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">角色</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">注册时间</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">操作</th>
                       </tr>
+                    </thead>
+                    <tbody>
+                      {friendUsers.map((u) => (
+                        <tr key={u.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-[#dbe08c] rounded-full flex items-center justify-center">
+                                <span className="text-sm font-medium text-[#89800c]">
+                                  {u.username.charAt(0)}
+                                </span>
+                              </div>
+                              <span className="font-medium text-gray-800">{u.username}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-gray-600 text-sm">{u.email}</td>
+                          <td className="px-6 py-4">
+                            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                              {u.role === "admin" ? "管理员" : "好友"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-gray-500 text-sm">{formatDate(u.createdAt)}</td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() => handleDeleteUser(u.id, u.username)}
+                              className="text-red-500 hover:text-red-700 transition-colors p-1"
+                              title="删除用户"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* 访问统计 */}
+          {activeTab === "stats" && stats && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-[#89800c]">{stats.totalVisits.toLocaleString()}</div>
+                  <div className="text-sm text-gray-500 mt-2">总访问量</div>
+                </div>
+                <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-[#89800c]">{stats.uniqueVisitors.toLocaleString()}</div>
+                  <div className="text-sm text-gray-500 mt-2">访客数</div>
+                </div>
+                <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-blue-600">{Object.keys(stats.dailyVisits || {}).length}</div>
+                  <div className="text-sm text-gray-500 mt-2">活跃天数</div>
+                </div>
+                <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-green-600">{messages.length}</div>
+                  <div className="text-sm text-gray-500 mt-2">留言数</div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                  <div className="bg-[#dbe08c] px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <Monitor className="w-5 h-5 text-[#89800c]" />
+                      <h2 className="font-bold text-[#89800c]">操作系统分布</h2>
+                    </div>
+                  </div>
+                  <div className="p-6 space-y-3">
+                    {Object.entries(stats.osStats || {}).sort((a, b) => b[1] - a[1]).map(([os, count]) => (
+                      <div key={os} className="flex items-center gap-3">
+                        <span className="text-sm text-gray-700 w-24 flex-shrink-0">{os}</span>
+                        <div className="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
+                          <div
+                            className="h-full bg-[#89800c] rounded-full transition-all duration-500"
+                            style={{ width: `${(count / stats.totalVisits) * 100}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-medium text-gray-700 w-12 text-right">{count as number}</span>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              )}
+                    {Object.keys(stats.osStats || {}).length === 0 && (
+                      <div className="text-center text-gray-400 py-4">暂无数据</div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                  <div className="bg-[#dbe08c] px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <Smartphone className="w-5 h-5 text-[#89800c]" />
+                      <h2 className="font-bold text-[#89800c]">设备类型分布</h2>
+                    </div>
+                  </div>
+                  <div className="p-6 space-y-3">
+                    {Object.entries(stats.deviceStats || {}).sort((a, b) => b[1] - a[1]).map(([device, count]) => (
+                      <div key={device} className="flex items-center gap-3">
+                        <span className="text-sm text-gray-700 w-24 flex-shrink-0">
+                          {device === "Desktop" ? "电脑端" : device === "Mobile" ? "手机端" : device === "Tablet" ? "平板" : device}
+                        </span>
+                        <div className="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
+                          <div
+                            className="h-full bg-[#89800c] rounded-full transition-all duration-500"
+                            style={{ width: `${(count / stats.totalVisits) * 100}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-medium text-gray-700 w-12 text-right">{count as number}</span>
+                      </div>
+                    ))}
+                    {Object.keys(stats.deviceStats || {}).length === 0 && (
+                      <div className="text-center text-gray-400 py-4">暂无数据</div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden md:col-span-2">
+                  <div className="bg-[#dbe08c] px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-5 h-5 text-[#89800c]" />
+                      <h2 className="font-bold text-[#89800c]">访问来源</h2>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(stats.sourceStats || {}).sort((a, b) => b[1] - a[1]).map(([source, count]) => (
+                        <span key={source} className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm">
+                          {source} <span className="font-bold text-[#89800c]">{count as number}</span>
+                        </span>
+                      ))}
+                      {Object.keys(stats.sourceStats || {}).length === 0 && (
+                        <div className="text-center text-gray-400 py-4 w-full">暂无数据</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 删除确认弹窗 */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-sm mx-4 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-800">确认删除</h3>
+              <button onClick={() => setDeleteConfirm(null)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-gray-600 mb-6">
+              确定要删除用户「{deleteConfirm.name}」吗？该用户的所有数据将被移除。
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                取消
+              </button>
+              <button
+                onClick={confirmDeleteUser}
+                className="flex-1 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              >
+                确认删除
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

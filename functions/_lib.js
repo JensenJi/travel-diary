@@ -75,7 +75,7 @@ async function getUserFromRequest(request, env) {
   const token = auth.slice(7);
   const payload = await verifyToken(token, env);
   if (!payload) return null;
-  return { id: payload.userId, email: payload.email, username: payload.username };
+  return { id: payload.userId, email: payload.email, username: payload.username, role: payload.role || "friend" };
 }
 
 function json(data, status = 200) {

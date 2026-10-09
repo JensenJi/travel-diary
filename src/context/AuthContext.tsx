@@ -7,13 +7,14 @@ interface User {
   id: string;
   email: string;
   username: string;
+  role?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, username: string) => Promise<void>;
+  login: (email: string, password: string, role?: string) => Promise<void>;
+  register: (email: string, password: string, username: string, role?: string) => Promise<void>;
   logout: () => Promise<void>;
   changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     })();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, _role?: string) => {
     const res = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -85,11 +86,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(data.user);
   };
 
-  const register = async (email: string, password: string, username: string) => {
+  const register = async (email: string, password: string, username: string, role?: string) => {
     const res = await fetch(`${API_BASE_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, username }),
+      body: JSON.stringify({ email, password, username, role }),
     });
     const text = await res.text();
     try {

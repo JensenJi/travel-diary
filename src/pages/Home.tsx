@@ -552,25 +552,18 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 bg-gray-50 p-4">
-            <h2 className="text-base font-bold text-gray-800 mb-2">个人简介</h2>
-            <div className="text-xs text-gray-600 leading-relaxed">
+          <div className="border-t border-gray-200 bg-gray-50 px-4 pt-4 pb-2">
+            <h2 className="text-base font-bold text-gray-800">个人简介</h2>
+          </div>
+
+          <div className="bg-gray-50 border-l-4 border-[#89800c] px-4 py-3">
+            <div className="text-xs text-gray-600 leading-relaxed space-y-1">
               <p className="hanging-indent">• 拥有 30 年品牌商品、授权衍生品及促销礼品全球采购从业经验。</p>
-              {showMoreAbout && (
-                <>
-                  <p className="hanging-indent">• 鞋服、饰品、玩具全品类新品开发与货源寻源、开发、生产部署工作。</p>
-                  <p className="hanging-indent">• 代工、生产统筹与品控全流程生产及品质管理工作。</p>
-                  <p className="hanging-indent">• 跨区域生产、品质管理、跨职能团队工作统筹管理工作。</p>
-                  <p className="hanging-indent">• 管理全国多省市、规模超 150 人的鞋服箱包开发团队管理工作。</p>
-                </>
-              )}
+              <p className="hanging-indent">• 鞋服、饰品、玩具全品类新品开发与货源寻源、开发、生产部署工作。</p>
+              <p className="hanging-indent">• 代工、生产统筹与品控全流程生产及品质管理工作。</p>
+              <p className="hanging-indent">• 跨区域生产、品质管理、跨职能团队工作统筹管理工作。</p>
+              <p className="hanging-indent">• 管理全国多省市、规模超 150 人的鞋服箱包开发团队管理工作。</p>
             </div>
-            <button
-              onClick={() => setShowMoreAbout(!showMoreAbout)}
-              className="block mx-auto text-[#89800c] text-xs cursor-pointer hover:underline mt-2"
-            >
-              {showMoreAbout ? "收起 -" : "更多 +"}
-            </button>
           </div>
 
           <div className="border-t border-gray-200 p-4">
@@ -615,7 +608,7 @@ export default function Home() {
           <div className="border-t border-gray-200 bg-gray-50 p-4">
             <h2 className="text-base font-bold text-gray-800 mb-4">教育培训</h2>
             
-            {educations.slice(0, showAllEducation ? educations.length : 1).map((education, index) => (
+            {[...educations].reverse().slice(0, showAllEducation ? educations.length : 1).map((education, index) => (
               <div key={education.id} className={`flex items-start gap-3 ${index > 0 ? 'mt-6 pt-6 border-t border-gray-100' : ''}`}>
                 <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0 bg-gray-50 border border-gray-200">
                   {education.logo ? (
@@ -649,7 +642,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="border-t border-gray-200 p-4">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-bold text-gray-800">技能特长</h2>
