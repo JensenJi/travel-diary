@@ -13,6 +13,7 @@ interface VisitStats {
   deviceStats: Record<string, number>;
   osStats?: Record<string, number>;
   sourceStats?: Record<string, number>;
+  regionStats?: Record<string, number>;
 }
 
 export default function Login() {

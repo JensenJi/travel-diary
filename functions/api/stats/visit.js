@@ -3,23 +3,25 @@ import { checkKV, json, getUserFromRequest, ADMIN_EMAIL } from "../../_lib.js";
 function getVisitorInfo(request) {
   const ua = request.headers.get("User-Agent") || "";
   const referer = request.headers.get("Referer") || "direct";
-  
-  // Detect OS
-  let os = "Unknown";
+
+  // Detect OS — 细分 Windows 版本
+  let os = "其它";
   if (/Windows NT 10/.test(ua)) os = "Windows 10/11";
-  else if (/Windows NT 6/.test(ua)) os = "Windows 7/8";
+  else if (/Windows NT 6\.3/.test(ua)) os = "Windows 8.1";
+  else if (/Windows NT 6\.2/.test(ua)) os = "Windows 8";
+  else if (/Windows NT 6\.1/.test(ua)) os = "Windows 7";
   else if (/Mac OS X/.test(ua)) os = "macOS";
   else if (/Android/.test(ua)) os = "Android";
   else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS";
   else if (/Linux/.test(ua)) os = "Linux";
-  
+
   // Detect device type
-  let device = "Desktop";
-  if (/Mobile|Android|iPhone|iPod/.test(ua)) device = "Mobile";
-  else if (/iPad|Tablet/.test(ua)) device = "Tablet";
-  
-  // Detect source (simplified)
-  let source = "direct";
+  let device = "电脑";
+  if (/Mobile|Android|iPhone|iPod/.test(ua)) device = "手机";
+  else if (/iPad|Tablet/.test(ua)) device = "平板";
+
+  // Detect source — 搜索引擎来源
+  let source = "直接访问";
   if (referer && referer !== "direct") {
     try {
       const url = new URL(referer);
@@ -31,11 +33,34 @@ function getVisitorInfo(request) {
       else if (/sogou\./.test(domain)) source = "搜狗";
       else source = domain;
     } catch {
-      source = "direct";
+      source = "直接访问";
     }
   }
-  
-  return { os, device, source };
+
+  // Detect region — 使用 Cloudflare 的 cf 对象获取 IP 地理位置
+  let region = "未知";
+  const cf = request.cf;
+  if (cf) {
+    const country = cf.country || cf.countryName;
+    const city = cf.city || cf.colo;
+    if (country) {
+      // 国家中文映射
+      const countryMap = {
+        "CN": "中国", "US": "美国", "JP": "日本", "KR": "韩国",
+        "GB": "英国", "DE": "德国", "FR": "法国", "CA": "加拿大",
+        "AU": "澳大利亚", "SG": "新加坡", "HK": "中国香港", "TW": "中国台湾",
+        "RU": "俄罗斯", "IN": "印度", "BR": "巴西",
+      };
+      const countryName = countryMap[country] || country;
+      if (country === "CN" && city) {
+        region = `中国·${city}`;
+      } else {
+        region = countryName;
+      }
+    }
+  }
+
+  return { os, device, source, region };
 }
 
 async function getStats(env) {
@@ -46,6 +71,7 @@ async function getStats(env) {
     osStats: {},
     deviceStats: {},
     sourceStats: {},
+    regionStats: {},
     dailyVisits: {},
   };
 }
@@ -60,30 +86,21 @@ export async function onRequestPost({ request, env }) {
   if (kvError) return kvError;
 
   const stats = await getStats(env);
-  const { os, device, source } = getVisitorInfo(request);
+  const { os, device, source, region } = getVisitorInfo(request);
   const today = new Date().toISOString().split("T")[0];
-  
-  // Total visits
+
   stats.totalVisits++;
-  
-  // OS stats
   stats.osStats[os] = (stats.osStats[os] || 0) + 1;
-  
-  // Device stats
   stats.deviceStats[device] = (stats.deviceStats[device] || 0) + 1;
-  
-  // Source stats
   stats.sourceStats[source] = (stats.sourceStats[source] || 0) + 1;
-  
-  // Daily visits
+  stats.regionStats[region] = (stats.regionStats[region] || 0) + 1;
   stats.dailyVisits[today] = (stats.dailyVisits[today] || 0) + 1;
-  
-  // Unique visitors (approximate by counting today's visits as unique)
+
   const days = Object.keys(stats.dailyVisits).length;
   stats.uniqueVisitors = Math.round(stats.totalVisits / Math.max(1, days) * 0.7);
-  
+
   await saveStats(env, stats);
-  
+
   return json({ success: true });
 }
 
@@ -95,11 +112,10 @@ export async function onRequestGet({ request, env }) {
   const stats = await getStats(env);
   const user = await getUserFromRequest(request, env);
   const isAdmin = user && user.email === ADMIN_EMAIL.toLowerCase();
-  
+
   if (isAdmin) {
     return json({ stats });
   } else {
-    // Public: only basic stats
     return json({
       stats: {
         totalVisits: stats.totalVisits,

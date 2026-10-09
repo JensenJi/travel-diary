@@ -1,9 +1,10 @@
 import Navbar from "@/components/Navbar";
 import { useAuth } from "@/context/AuthContext";
-import { Users, Mail, Calendar, Shield, LogOut, BarChart3, MessageCircle, Trash2, Monitor, Smartphone, Globe, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Users, Mail, Calendar, Shield, LogOut, BarChart3, MessageCircle, Trash2, Monitor, Smartphone, Globe, X, ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMessages, deleteMessage, Message } from "@/services/messageService";
+import * as echarts from "echarts";
 
 interface UserData {
   id: string;
@@ -19,6 +20,7 @@ interface VisitStats {
   osStats: Record<string, number>;
   deviceStats: Record<string, number>;
   sourceStats: Record<string, number>;
+  regionStats?: Record<string, number>;
   dailyVisits: Record<string, number>;
 }
 
@@ -31,6 +33,13 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"messages" | "users" | "stats">("messages");
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
+  const [userPage, setUserPage] = useState(1);
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const osChartRef = useRef<HTMLDivElement>(null);
+  const deviceChartRef = useRef<HTMLDivElement>(null);
+  const regionChartRef = useRef<HTMLDivElement>(null);
+  const sourceChartRef = useRef<HTMLDivElement>(null);
+  const chartInstances = useRef<echarts.ECharts[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -155,6 +164,62 @@ export default function Admin() {
   }
 
   const friendUsers = users.filter(u => u.role !== "admin");
+
+  // 用户分页：每页10条
+  const usersPerPage = 10;
+  const totalUserPages = Math.ceil(friendUsers.length / usersPerPage);
+  const pagedUsers = friendUsers.slice((userPage - 1) * usersPerPage, userPage * usersPerPage);
+
+  // 饼图渲染
+  useEffect(() => {
+    if (activeTab !== "stats" || !stats) return;
+
+    // 清理旧图表
+    chartInstances.current.forEach(c => c.dispose());
+    chartInstances.current = [];
+
+    const pieColors = ["#89800c", "#dbe08c", "#4CAF50", "#2196F3", "#FF9800", "#9C27B0", "#F44336", "#795548", "#009688", "#FF5722"];
+
+    const renderPie = (ref: React.RefObject<HTMLDivElement>, title: string, data: Record<string, number>) => {
+      if (!ref.current) return;
+      const chart = echarts.init(ref.current);
+      const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+      const chartData = entries.map(([name, value], i) => ({
+        name,
+        value: value as number,
+        itemStyle: { color: pieColors[i % pieColors.length] },
+      }));
+      chart.setOption({
+        title: { text: title, left: "center", textStyle: { fontSize: 14, fontWeight: "bold" } },
+        tooltip: { trigger: "item", formatter: "{b}: {c} ({d}%)" },
+        legend: { bottom: 5, type: "scroll", textStyle: { fontSize: 12 } },
+        series: [{
+          type: "pie",
+          radius: ["35%", "60%"],
+          center: ["50%", "48%"],
+          avoidLabelOverlap: true,
+          itemStyle: { borderRadius: 6, borderColor: "#fff", borderWidth: 2 },
+          label: { show: true, formatter: "{d}%", fontSize: 11 },
+          data: chartData,
+        }],
+      });
+      chartInstances.current.push(chart);
+    };
+
+    renderPie(osChartRef, "操作系统分布", stats.osStats || {});
+    renderPie(deviceChartRef, "设备来源分布", stats.deviceStats || {});
+    renderPie(regionChartRef, "访问地区分布", stats.regionStats || {});
+    renderPie(sourceChartRef, "访问来源分布", stats.sourceStats || {});
+
+    const handleResize = () => chartInstances.current.forEach(c => c.resize());
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      chartInstances.current.forEach(c => c.dispose());
+      chartInstances.current = [];
+    };
+  }, [activeTab, stats]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -327,14 +392,15 @@ export default function Admin() {
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-[#89800c]" />
                   <h2 className="font-bold text-[#89800c]">好友用户列表</h2>
+                  <span className="text-sm text-[#89800c] ml-2">（共 {friendUsers.length} 人）</span>
                 </div>
               </div>
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto" style={{ maxHeight: "500px", overflowY: "auto" }}>
                 {friendUsers.length === 0 ? (
                   <div className="text-center py-8 text-gray-500">暂无好友用户</div>
                 ) : (
                   <table className="w-full">
-                    <thead>
+                    <thead className="sticky top-0 bg-white z-10">
                       <tr className="border-b border-gray-200">
                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">用户名</th>
                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">邮箱</th>
@@ -344,7 +410,7 @@ export default function Admin() {
                       </tr>
                     </thead>
                     <tbody>
-                      {friendUsers.map((u) => (
+                      {pagedUsers.map((u) => (
                         <tr key={u.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
@@ -364,19 +430,86 @@ export default function Admin() {
                           </td>
                           <td className="px-6 py-4 text-gray-500 text-sm">{formatDate(u.createdAt)}</td>
                           <td className="px-6 py-4">
-                            <button
-                              onClick={() => handleDeleteUser(u.id, u.username)}
-                              className="text-red-500 hover:text-red-700 transition-colors p-1"
-                              title="删除用户"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => setSelectedUser(u)}
+                                className="text-blue-500 hover:text-blue-700 transition-colors p-1"
+                                title="查看联系方式"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(u.id, u.username)}
+                                className="text-red-500 hover:text-red-700 transition-colors p-1"
+                                title="删除用户"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 )}
+              </div>
+              {/* 分页 */}
+              {totalUserPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200 bg-gray-50">
+                  <span className="text-sm text-gray-600">
+                    第 {userPage} / {totalUserPages} 页（每页 {usersPerPage} 条）
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setUserPage(p => Math.max(1, p - 1))}
+                      disabled={userPage === 1}
+                      className="p-1.5 text-gray-600 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-30"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => setUserPage(p => Math.min(totalUserPages, p + 1))}
+                      disabled={userPage === totalUserPages}
+                      className="p-1.5 text-gray-600 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-30"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 用户详情弹窗 */}
+          {selectedUser && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setSelectedUser(null)}>
+              <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-800">用户详情</h3>
+                  <button onClick={() => setSelectedUser(null)} className="text-gray-400 hover:text-gray-600">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-[#dbe08c] rounded-full flex items-center justify-center">
+                      <span className="text-lg font-bold text-[#89800c]">{selectedUser.username.charAt(0)}</span>
+                    </div>
+                    <span className="text-xl font-medium text-gray-800">{selectedUser.username}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Mail className="w-4 h-4 text-[#89800c]" />
+                    <span className="text-sm">{selectedUser.email}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Calendar className="w-4 h-4 text-[#89800c]" />
+                    <span className="text-sm">注册时间：{formatDate(selectedUser.createdAt)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Shield className="w-4 h-4 text-[#89800c]" />
+                    <span className="text-sm">角色：{selectedUser.role === "admin" ? "管理员" : "好友"}</span>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -403,80 +536,46 @@ export default function Admin() {
                 </div>
               </div>
 
+              {/* 四个饼图 */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                  <div className="bg-[#dbe08c] px-6 py-4">
+                  <div className="bg-[#dbe08c] px-6 py-3">
                     <div className="flex items-center gap-2">
                       <Monitor className="w-5 h-5 text-[#89800c]" />
-                      <h2 className="font-bold text-[#89800c]">操作系统分布</h2>
+                      <h2 className="font-bold text-[#89800c]">操作系统</h2>
                     </div>
                   </div>
-                  <div className="p-6 space-y-3">
-                    {Object.entries(stats.osStats || {}).sort((a, b) => b[1] - a[1]).map(([os, count]) => (
-                      <div key={os} className="flex items-center gap-3">
-                        <span className="text-sm text-gray-700 w-24 flex-shrink-0">{os}</span>
-                        <div className="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
-                          <div
-                            className="h-full bg-[#89800c] rounded-full transition-all duration-500"
-                            style={{ width: `${(count / stats.totalVisits) * 100}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-sm font-medium text-gray-700 w-12 text-right">{count as number}</span>
-                      </div>
-                    ))}
-                    {Object.keys(stats.osStats || {}).length === 0 && (
-                      <div className="text-center text-gray-400 py-4">暂无数据</div>
-                    )}
-                  </div>
+                  <div ref={osChartRef} style={{ height: "280px", width: "100%" }}></div>
                 </div>
 
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                  <div className="bg-[#dbe08c] px-6 py-4">
+                  <div className="bg-[#dbe08c] px-6 py-3">
                     <div className="flex items-center gap-2">
                       <Smartphone className="w-5 h-5 text-[#89800c]" />
-                      <h2 className="font-bold text-[#89800c]">设备类型分布</h2>
+                      <h2 className="font-bold text-[#89800c]">设备来源</h2>
                     </div>
                   </div>
-                  <div className="p-6 space-y-3">
-                    {Object.entries(stats.deviceStats || {}).sort((a, b) => b[1] - a[1]).map(([device, count]) => (
-                      <div key={device} className="flex items-center gap-3">
-                        <span className="text-sm text-gray-700 w-24 flex-shrink-0">
-                          {device === "Desktop" ? "电脑端" : device === "Mobile" ? "手机端" : device === "Tablet" ? "平板" : device}
-                        </span>
-                        <div className="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
-                          <div
-                            className="h-full bg-[#89800c] rounded-full transition-all duration-500"
-                            style={{ width: `${(count / stats.totalVisits) * 100}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-sm font-medium text-gray-700 w-12 text-right">{count as number}</span>
-                      </div>
-                    ))}
-                    {Object.keys(stats.deviceStats || {}).length === 0 && (
-                      <div className="text-center text-gray-400 py-4">暂无数据</div>
-                    )}
-                  </div>
+                  <div ref={deviceChartRef} style={{ height: "280px", width: "100%" }}></div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-lg overflow-hidden md:col-span-2">
-                  <div className="bg-[#dbe08c] px-6 py-4">
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                  <div className="bg-[#dbe08c] px-6 py-3">
                     <div className="flex items-center gap-2">
                       <Globe className="w-5 h-5 text-[#89800c]" />
+                      <h2 className="font-bold text-[#89800c]">访问地区</h2>
+                    </div>
+                  </div>
+                  <div ref={regionChartRef} style={{ height: "280px", width: "100%" }}></div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                  <div className="bg-[#dbe08c] px-6 py-3">
+                    <div className="flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-[#89800c]" />
                       <h2 className="font-bold text-[#89800c]">访问来源</h2>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <div className="flex flex-wrap gap-2">
-                      {Object.entries(stats.sourceStats || {}).sort((a, b) => b[1] - a[1]).map(([source, count]) => (
-                        <span key={source} className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm">
-                          {source} <span className="font-bold text-[#89800c]">{count as number}</span>
-                        </span>
-                      ))}
-                      {Object.keys(stats.sourceStats || {}).length === 0 && (
-                        <div className="text-center text-gray-400 py-4 w-full">暂无数据</div>
-                      )}
-                    </div>
-                  </div>
+                  <div ref={sourceChartRef} style={{ height: "280px", width: "100%" }}></div>
                 </div>
               </div>
             </div>
