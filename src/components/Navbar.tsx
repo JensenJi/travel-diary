@@ -112,6 +112,7 @@ export default function Navbar() {
           width: 100%;
           max-width: 210mm;
           position: relative;
+          z-index: 999;
         }
         .nav-links {
           display: flex;

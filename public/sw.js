@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jensenji-v3';
+const CACHE_NAME = 'jensenji-v4';
 const urlsToCache = [
   '/',
   '/favicon.svg',
@@ -33,6 +33,27 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
+  // Only handle GET requests
+  if (event.request.method !== 'GET') return;
+
+  var url = new URL(event.request.url);
+
+  // Don't intercept API requests - always let them go to network
+  if (url.pathname.startsWith('/api/')) {
+    return;
+  }
+
+  // Don't intercept static assets (JS, CSS) - let browser handle them
+  // This prevents stale cached JS bundles from causing blank pages
+  if (url.pathname.startsWith('/assets/') ||
+      url.pathname.endsWith('.js') ||
+      url.pathname.endsWith('.css') ||
+      url.pathname.endsWith('.ts') ||
+      url.pathname.endsWith('.tsx')) {
+    return;
+  }
+
+  // For HTML pages, use network-first strategy
   event.respondWith(
     fetch(event.request).then(function(response) {
       if (response && response.status === 200 && response.type === 'basic') {
@@ -43,7 +64,9 @@ self.addEventListener('fetch', function(event) {
       }
       return response;
     }).catch(function() {
-      return caches.match(event.request);
+      return caches.match(event.request).then(function(cached) {
+        return cached || new Response('Offline', { status: 503 });
+      });
     })
   );
 });
