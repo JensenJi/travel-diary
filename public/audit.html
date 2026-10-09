@@ -17,7 +17,8 @@
 .site-footer p{margin:0;}
 .site-footer .sub{font-size:12px;color:#6b7280;margin-top:4px;}
 @media(max-width:768px){
-body{width:100%;overflow-x:auto;}
+body{width:100%;overflow-x:hidden;}
+.audit-wrap{width:auto;margin:8px;padding:10px 8px;border-radius:8px;}
 table{min-width:720px;}
 .site-nav-inner{flex-direction:column;}
 .site-nav-toggle{display:block;align-self:flex-start;}
@@ -27,16 +28,25 @@ body.nav-open .site-nav-links{display:flex;}
 .site-nav-links a:not(:last-child)::after{display:none;}
 body.nav-open .site-nav-mask{display:block;position:fixed;top:44px;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:9998;}
 }
-@media print{.site-nav{display:none;}.site-footer{display:none;}body{padding-top:0!important;}}
+@media print{.site-nav{display:none;}.site-footer{display:none;}body{padding-top:0!important;background:#fff!important;}.audit-wrap{box-shadow:none!important;border-radius:0!important;width:100%!important;margin:0!important;padding:0!important;overflow:visible!important;}}
 @page{size:A4 portrait;margin:5mm 4mm;}
 *{margin:0;padding:0;box-sizing:border-box;}
+html{background:#f0f2f5;}
 body{
   font-family:"Microsoft YaHei","PingFang SC",sans-serif;
   font-size:11px;
   color:#333;
-  background:#fff;
+  background:#f0f2f5;
+  margin:0;
+}
+.audit-wrap{
   width:210mm;
-  margin:0 auto;
+  margin:14px auto 20px;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  padding:16px 18px;
+  overflow-x:auto;
 }
 table{width:100%;border-collapse:collapse;table-layout:fixed;}
 
@@ -190,11 +200,28 @@ input[type="date"]{
 <a href="/message">好友留言</a>
 <a href="/aboutme">我的简历</a>
 <a href="/resume-template.html">简历模板</a>
-<a href="/login">注册登录</a>
+<a href="/admin" id="navAdmin" style="display:none;">管理</a>
+<a href="/" id="navLogout" style="display:none;" onclick="localStorage.removeItem('token')">退出</a>
+<a href="/login" id="navLogin">注册登录</a>
 </div>
 </div></nav>
 <div class="site-nav-mask" onclick="document.body.classList.remove('nav-open')"></div>
+<script>
+// 根据登录状态显示导航项（与 React 版 Navbar 行为一致）
+(function(){
+  var token = localStorage.getItem('token');
+  if(!token) return;
+  try{
+    var payload = JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    var isAdmin = payload.email === 'jensenji@sohu.com' || payload.role === 'admin';
+    if(isAdmin) document.getElementById('navAdmin').style.display = '';
+    document.getElementById('navLogout').style.display = '';
+    document.getElementById('navLogin').style.display = 'none';
+  }catch(e){ /* token 无效，保持未登录状态 */ }
+})();
+</script>
 
+<div class="audit-wrap">
 <table>
 <!-- 标题 -->
 <tr><td colspan="10" style="text-align:center;padding:6px 0;border:1px solid #333;">
@@ -505,6 +532,7 @@ input[type="date"]{
   </td>
 </tr>
 </table>
+</div>
 
 <script>
 function addRow(){
@@ -562,7 +590,7 @@ function validateClientInfo(){
 
 // 获取审核表数据（供父页面调用）
 function getAuditData(){
-  var table = document.querySelector('body > table');
+  var table = document.querySelector('.audit-wrap > table');
   var companyInput = document.querySelector('tr:nth-child(3) td:nth-child(2) input');
   var emailInput = document.querySelector('tr:nth-child(7) td:nth-child(6) input');
   return {
@@ -574,7 +602,7 @@ function getAuditData(){
 
 // 获取审核表完整数据（含HTML内容）
 function getFullAuditData(){
-  var table = document.querySelector('body > table');
+  var table = document.querySelector('.audit-wrap > table');
   var companyInput = document.querySelector('tr:nth-child(3) td:nth-child(2) input');
   var addrInput = document.querySelector('tr:nth-child(4) td:nth-child(2) input');
   var ownerInput = document.querySelector('tr:nth-child(6) td:nth-child(2) input');
@@ -626,7 +654,7 @@ function validateAndSave(){
 
 // 打印预览：在新窗口中打开静态内容
 function printPreview(){
-  var table = document.querySelector('body > table').cloneNode(true);
+  var table = document.querySelector('.audit-wrap > table').cloneNode(true);
 
   // 移除按钮行
   var submitRow = table.querySelector('.submit-row');

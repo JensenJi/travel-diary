@@ -1,10 +1,9 @@
 import Navbar from "@/components/Navbar";
 import { useAuth, ADMIN_EMAIL } from "@/context/AuthContext";
 import { Users, Mail, Calendar, Shield, LogOut, BarChart3, MessageCircle, Trash2, Monitor, Smartphone, Globe, X, ChevronLeft, ChevronRight, Eye, ClipboardList } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMessages, deleteMessage, Message } from "@/services/messageService";
-import * as echarts from "echarts";
 
 interface UserData {
   id: string;
@@ -21,6 +20,8 @@ interface VisitStats {
   deviceStats: Record<string, number>;
   sourceStats: Record<string, number>;
   regionStats?: Record<string, number>;
+  countryStats?: Record<string, number>;
+  cityStats?: Record<string, number>;
   dailyVisits: Record<string, number>;
 }
 
@@ -48,11 +49,7 @@ export default function Admin() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
   const [userPage, setUserPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
-  const osChartRef = useRef<HTMLDivElement>(null);
-  const deviceChartRef = useRef<HTMLDivElement>(null);
-  const regionChartRef = useRef<HTMLDivElement>(null);
-  const sourceChartRef = useRef<HTMLDivElement>(null);
-  const chartInstances = useRef<echarts.ECharts[]>([]);
+
 
   useEffect(() => {
     if (!user) {
@@ -210,56 +207,33 @@ export default function Admin() {
     navigate("/");
   };
 
-  // 饼图渲染（必须放在提前 return 之前，否则违反 React Hooks 规则导致页面崩溃白屏）
-  useEffect(() => {
-    if (activeTab !== "stats" || !stats) return;
-
-    // 清理旧图表
-    chartInstances.current.forEach(c => c.dispose());
-    chartInstances.current = [];
-
-    const pieColors = ["#89800c", "#dbe08c", "#4CAF50", "#2196F3", "#FF9800", "#9C27B0", "#F44336", "#795548", "#009688", "#FF5722"];
-
-    const renderPie = (ref: React.RefObject<HTMLDivElement>, title: string, data: Record<string, number>) => {
-      if (!ref.current) return;
-      const chart = echarts.init(ref.current);
-      const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
-      const chartData = entries.map(([name, value], i) => ({
-        name,
-        value: value as number,
-        itemStyle: { color: pieColors[i % pieColors.length] },
-      }));
-      chart.setOption({
-        title: { text: title, left: "center", textStyle: { fontSize: 14, fontWeight: "bold" } },
-        tooltip: { trigger: "item", formatter: "{b}: {c} ({d}%)" },
-        legend: { bottom: 5, type: "scroll", textStyle: { fontSize: 12 } },
-        series: [{
-          type: "pie",
-          radius: ["35%", "60%"],
-          center: ["50%", "48%"],
-          avoidLabelOverlap: true,
-          itemStyle: { borderRadius: 6, borderColor: "#fff", borderWidth: 2 },
-          label: { show: true, formatter: "{d}%", fontSize: 11 },
-          data: chartData,
-        }],
-      });
-      chartInstances.current.push(chart);
-    };
-
-    renderPie(osChartRef, "操作系统分布", stats.osStats || {});
-    renderPie(deviceChartRef, "设备来源分布", stats.deviceStats || {});
-    renderPie(regionChartRef, "访问地区分布", stats.regionStats || {});
-    renderPie(sourceChartRef, "访问来源分布", stats.sourceStats || {});
-
-    const handleResize = () => chartInstances.current.forEach(c => c.resize());
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      chartInstances.current.forEach(c => c.dispose());
-      chartInstances.current = [];
-    };
-  }, [activeTab, stats]);
+  // 列表图例渲染（可视化替代方案，避免饼图过密）
+  const listColors = ["#89800c", "#dbe08c", "#4CAF50", "#2196F3", "#FF9800", "#9C27B0", "#F44336", "#795548", "#009688", "#FF5722"];
+  const renderListLegend = (title: string, data: Record<string, number>) => {
+    const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+    const total = entries.reduce((sum, [, v]) => sum + v, 0);
+    if (total === 0) {
+      return <p className="text-center text-gray-400 text-sm py-6">暂无数据</p>;
+    }
+    return (
+      <div className="p-4">
+        <h3 className="text-center text-sm font-semibold text-gray-700 mb-4">{title}</h3>
+        <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+          {entries.map(([name, value], i) => {
+            const pct = Math.round((value / total) * 1000) / 10;
+            return (
+              <div key={name} className="flex items-center gap-2 text-sm">
+                <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: listColors[i % listColors.length] }} />
+                <span className="text-gray-700 flex-1 min-w-0 truncate">{name}</span>
+                <span className="text-gray-900 font-medium tabular-nums">{value}次</span>
+                <span className="text-gray-500 tabular-nums w-14 text-right">{pct}%</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   if (!user || loading) {
     return (
@@ -691,7 +665,7 @@ export default function Admin() {
                       <h2 className="font-bold text-[#89800c]">操作系统</h2>
                     </div>
                   </div>
-                  <div ref={osChartRef} style={{ height: "280px", width: "100%" }}></div>
+                  <div style={{ height: "280px", width: "100%" }}>{stats && renderListLegend("操作系统分布", stats.osStats || {})}</div>
                 </div>
 
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -701,27 +675,51 @@ export default function Admin() {
                       <h2 className="font-bold text-[#89800c]">设备来源</h2>
                     </div>
                   </div>
-                  <div ref={deviceChartRef} style={{ height: "280px", width: "100%" }}></div>
+                  <div style={{ height: "280px", width: "100%" }}>{stats && renderListLegend("设备来源分布", stats.deviceStats || {})}</div>
                 </div>
 
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                   <div className="bg-[#dbe08c] px-6 py-3">
                     <div className="flex items-center gap-2">
                       <Globe className="w-5 h-5 text-[#89800c]" />
-                      <h2 className="font-bold text-[#89800c]">访问地区</h2>
+                      <h2 className="font-bold text-[#89800c]">来源国家</h2>
                     </div>
                   </div>
-                  <div ref={regionChartRef} style={{ height: "280px", width: "100%" }}></div>
+                  <div style={{ minHeight: "280px", width: "100%" }}>
+                    {stats && renderListLegend("国家分布", stats.countryStats || {})}
+                    {stats && Object.keys(stats.cityStats || {}).length > 0 && (
+                      <div className="px-4 pb-4 border-t border-gray-100">
+                        <h4 className="text-xs font-semibold text-gray-500 mt-3 mb-2">中国城市细分</h4>
+                        <div className="space-y-1.5">
+                          {Object.entries(stats.cityStats || {})
+                            .filter(([n]) => !stats.countryStats?.[n])
+                            .sort((a, b) => b[1] - a[1])
+                            .map(([name, value], i) => {
+                              const total = Object.values(stats.cityStats || {}).reduce((s, v) => s + v, 0);
+                              const pct = Math.round((value / total) * 1000) / 10;
+                              return (
+                                <div key={name} className="flex items-center gap-2 text-xs">
+                                  <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: listColors[i % listColors.length] }} />
+                                  <span className="text-gray-600 flex-1 min-w-0 truncate">{name}</span>
+                                  <span className="text-gray-800 tabular-nums">{value}次</span>
+                                  <span className="text-gray-400 tabular-nums w-12 text-right">{pct}%</span>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                   <div className="bg-[#dbe08c] px-6 py-3">
                     <div className="flex items-center gap-2">
                       <BarChart3 className="w-5 h-5 text-[#89800c]" />
-                      <h2 className="font-bold text-[#89800c]">访问来源</h2>
+                      <h2 className="font-bold text-[#89800c]">地区来源</h2>
                     </div>
                   </div>
-                  <div ref={sourceChartRef} style={{ height: "280px", width: "100%" }}></div>
+                  <div style={{ height: "280px", width: "100%" }}>{stats && renderListLegend("地区来源分布", stats.sourceStats || {})}</div>
                 </div>
               </div>
             </div>
