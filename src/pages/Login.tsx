@@ -1,10 +1,9 @@
 import Navbar from "@/components/Navbar";
-import { User, Lock, Mail, AlertCircle, BarChart3, Monitor, Smartphone, Users, Globe } from "lucide-react";
+import { User, Lock, Mail, AlertCircle, BarChart3, Monitor, Smartphone, Globe } from "lucide-react";
 import { useState, type ChangeEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
-type UserRole = "friend" | "admin";
 type AuthMode = "login" | "register";
 
 interface VisitStats {
@@ -17,7 +16,6 @@ interface VisitStats {
 }
 
 export default function Login() {
-  const [role, setRole] = useState<UserRole>("friend");
   const [mode, setMode] = useState<AuthMode>("login");
   const [formData, setFormData] = useState({
     username: "",
@@ -62,7 +60,7 @@ export default function Login() {
 
     try {
       if (mode === "login") {
-        const user = await login(formData.email, formData.password, role);
+        const user = await login(formData.email, formData.password);
         navigate(user?.role === "admin" ? "/admin" : "/");
       } else {
         if (formData.password !== formData.confirmPassword) {
@@ -73,7 +71,7 @@ export default function Login() {
           setError("密码至少需要6位！");
           return;
         }
-        const user = await register(formData.email, formData.password, formData.username, role);
+        const user = await register(formData.email, formData.password, formData.username);
         navigate(user?.role === "admin" ? "/admin" : "/");
       }
     } catch (err: any) {
@@ -83,44 +81,16 @@ export default function Login() {
     }
   };
 
-  const title = role === "admin" ? "管理员" : "好友";
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#dbe08c]/20 to-[#89800c]/20">
       <Navbar />
       <div className="pt-16">
         <div className="max-w-md mx-auto mt-4 sm:mt-8 mb-4 sm:mb-8 px-3 sm:px-4">
           <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
-            {/* 角色切换 Tab */}
-            <div className="flex border-b border-gray-200">
-              <button
-                onClick={() => setRole("friend")}
-                className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                  role === "friend"
-                    ? "bg-[#dbe08c] text-[#89800c]"
-                    : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-                }`}
-              >
-                <Users className="w-4 h-4 inline mr-2" />
-                好友登录/注册
-              </button>
-              <button
-                onClick={() => setRole("admin")}
-                className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                  role === "admin"
-                    ? "bg-[#dbe08c] text-[#89800c]"
-                    : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-                }`}
-              >
-                <Monitor className="w-4 h-4 inline mr-2" />
-                管理员登录/注册
-              </button>
-            </div>
-
             {/* 标题栏 */}
             <div className="bg-[#dbe08c] p-4">
               <h2 className="text-2xl font-bold text-center text-[#89800c]">
-                {mode === "login" ? `${title}登录` : `${title}注册`}
+                {mode === "login" ? "登录" : "注册"}
               </h2>
             </div>
 
@@ -202,7 +172,7 @@ export default function Login() {
                   onClick={() => setMode(mode === "login" ? "register" : "login")}
                   className="text-[#89800c] hover:text-[#d1d678] font-medium transition-colors"
                 >
-                  {mode === "login" ? `还没有${title}账号？立即注册` : `已有${title}账号？立即登录`}
+                  {mode === "login" ? "还没有账号？立即注册" : "已有账号？立即登录"}
                 </button>
 
                 {mode === "login" && (
